@@ -1,0 +1,25 @@
+{
+  "name": "@sugars/highlight",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Code syntax highlighting ported from TangramJS.",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./themes/*.css": {
+      "types": "./themes/css.d.ts",
+      "default": "./themes/*.css"
+    }
+  },
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts",
+    "themes/*.css",
+    "themes/css.d.ts",
+    "THIRD-PARTY-NOTICES.md",
+    "licenses"
+  ]
+}

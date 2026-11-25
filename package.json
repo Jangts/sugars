@@ -1,0 +1,16 @@
+{
+  "name": "sugars",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Independent editor, syntax highlighting, and chart libraries.",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "tsc -b && node -e \"require('node:fs').cpSync('packages/editor/src/emoticons', 'packages/editor/dist/emoticons', { recursive: true })\"",
+    "typecheck": "tsc -b --pretty false"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}

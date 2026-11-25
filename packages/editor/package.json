@@ -1,0 +1,23 @@
+{
+  "name": "@sugars/editor",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Headless rich text editing for native DOM elements.",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist/*.js",
+    "dist/*.d.ts",
+    "dist/emoticons/*.gif"
+  ],
+  "dependencies": {
+    "dompurify": "^3.5.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

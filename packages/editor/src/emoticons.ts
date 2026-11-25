@@ -1,0 +1,23 @@
+/*! Ported from TangramJS form/SimpleEditor/emoticons/default.js. */
+export const defaultEmoticons: Readonly<Record<string, string>> = {
+    '微笑': new URL('./emoticons/wx.gif', import.meta.url).href,
+    '晕': new URL('./emoticons/y.gif', import.meta.url).href,
+    '心花怒放': new URL('./emoticons/xhnf.gif', import.meta.url).href,
+    '鼓掌': new URL('./emoticons/gz.gif', import.meta.url).href,
+    '哈欠': new URL('./emoticons/hax.gif', import.meta.url).href,
+    '憨笑': new URL('./emoticons/sx.gif', import.meta.url).href,
+    '汗': new URL('./emoticons/han.gif', import.meta.url).href,
+    '吃惊': new URL('./emoticons/cj.gif', import.meta.url).href,
+    '鄙视': new URL('./emoticons/bs.gif', import.meta.url).href,
+    '闭嘴': new URL('./emoticons/bz.gif', import.meta.url).href,
+    '呲牙': new URL('./emoticons/cy.gif', import.meta.url).href,
+    '害羞': new URL('./emoticons/hx.gif', import.meta.url).href,
+    '衰': new URL('./emoticons/shuai.gif', import.meta.url).href,
+    '偷笑': new URL('./emoticons/tx.gif', import.meta.url).href,
+    '折磨': new URL('./emoticons/zm.gif', import.meta.url).href,
+    '难过': new URL('./emoticons/ng.gif', import.meta.url).href,
+    '示爱': new URL('./emoticons/sa.gif', import.meta.url).href,
+    '可爱': new URL('./emoticons/ka.gif', import.meta.url).href,
+    '泪': new URL('./emoticons/lei.gif', import.meta.url).href,
+    '酷': new URL('./emoticons/cool.gif', import.meta.url).href,
+}
