@@ -1,15 +1,15 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `applescript` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 处理 AppleScript 命令、对象类名和多种注释写法。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 highlight.languages.applescript = {
+    // 块注释仅展开一层嵌套，避免把这组正则规则当作任意深度的解析器。
     'comment': [
-        // Allow one level of nesting
+        // 允许一层嵌套。
         /\(\*(?:\(\*[\w\W]*?\*\)|[\w\W])*?\*\)/,
         /--.+/,
         /#.+/

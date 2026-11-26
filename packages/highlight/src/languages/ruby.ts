@@ -1,15 +1,11 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `ruby` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
- *
- * Original by Samuel Flores
- *
- * Adds the following new token classes:
- * 		constant, builtin, variable, symbol, regex
+ * 识别 Ruby 的插值字符串、正则、符号、变量和内置常量。
  */
+
+/*! Original by Samuel Flores */
+
 import { highlighter as highlight } from '../core.js'
 import { cloneGrammar } from '../grammar.js'
 
@@ -30,6 +26,7 @@ var interpolation = {
 };
 
 highlight.languages.insertBefore('ruby', 'keyword', {
+    // 正则内部可含 Ruby 插值，所以定界符确认后仍需交给内层规则识别表达式。
     'regex': [{
             pattern: /%r([^a-zA-Z0-9\s\{\(\[<])(?:[^\\]|\\[\s\S])*?\1[gim]{0,3}/,
             inside: {
@@ -43,7 +40,7 @@ highlight.languages.insertBefore('ruby', 'keyword', {
             }
         },
         {
-            // Here we need to specifically allow interpolation
+            // 此处显式允许字符串插值。
             pattern: /%r\{(?:[^#{}\\]|#(?:\{[^}]+\})?|\\[\s\S])*\}[gim]{0,3}/,
             inside: {
                 'interpolation': interpolation
@@ -88,7 +85,7 @@ highlight.languages.ruby.string = [{
         }
     },
     {
-        // Here we need to specifically allow interpolation
+        // 此处显式允许字符串插值。
         pattern: /%[qQiIwWxs]?\{(?:[^#{}\\]|#(?:\{[^}]+\})?|\\[\s\S])*\}/,
         inside: {
             'interpolation': interpolation

@@ -1,14 +1,14 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `swift` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 识别 Swift 的语言关键字、编译属性、字面量及内置类型。
  */
+
 import { highlighter as highlight } from '../core.js'
 import { cloneGrammar, insideGrammar } from '../grammar.js'
 
 highlight.languages.swift = highlight.languages.extend('clike', {
+    // 字符串候选保留自身定界符，插值部分再挂接 Swift 词法以便识别其中的表达式。
     'string': {
         pattern: /("|')(\\(?:\((?:[^()]|\([^)]+\))+\)|\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,
         inside: {
@@ -19,7 +19,7 @@ highlight.languages.swift = highlight.languages.extend('clike', {
                         pattern: /^\\\(|\)$/,
                         alias: 'variable'
                     }
-                    // See rest below
+                    // 嵌套规则在下方补入。
                 }
             }
         }

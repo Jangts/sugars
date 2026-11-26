@@ -1,4 +1,7 @@
 /*! Ported from TangramJS form/SimpleEditor/Selection.js. */
+
+/* 保存属于当前编辑器的选区，工具栏或其他控件移走焦点后仍可恢复命令作用的位置。 */
+
 import { EditorRange } from './Range.js'
 
 export class EditorSelection {
@@ -10,6 +13,7 @@ export class EditorSelection {
         return this.restoreSelection()
     }
 
+    /** 保存的 Range 仍属于当前编辑器时才恢复，避免对其他编辑器或已移除区域执行命令。 */
     restoreSelection(): EditorRange | undefined {
         const range = this.range
         const area = range && this.richareas.find(item => range.isBelongTo(item))
@@ -49,6 +53,7 @@ export class EditorSelection {
     }
     isSelectionEmpty(): boolean { return this.range?.isEmpty() ?? false }
 
+    /** 在编辑区没有可用选区时，建立该区域可用于下一次插入的折叠选区。 */
     createEmptyRange(index = 0): EditorRange | undefined {
         const area = this.richareas[index]
         if (!area) return

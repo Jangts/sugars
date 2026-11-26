@@ -1,4 +1,7 @@
 /*! Ported from TangramJS painter/Charts/components/scales/Grid.js. */
+
+/* 计算直角坐标系的绘图区、刻度、标签和零点基线，同时支持横纵轴交换及双数值轴。 */
+
 import { ChartElement } from '../Abstract.js'
 import { fontString } from '../../util/canvas.js'
 import { eachEntry } from '../../series-data.js'

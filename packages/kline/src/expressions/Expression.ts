@@ -1,3 +1,5 @@
+/* 定义指标表达式的求值和生命周期约定，计算节点按行情索引共享环境。 */
+
 export class Expression {
     rid: number = 0
 

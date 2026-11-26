@@ -1,3 +1,5 @@
+/* 为 K 线、成交量、指标和覆盖层集中提供画笔所使用的主题色。 */
+
 import type { ThemeInterface } from './types.js'
 
 const lightBase = {

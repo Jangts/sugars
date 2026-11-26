@@ -1,3 +1,5 @@
+/* 维护每个元素的动画队列和进行中的任务，管理补间、可见性和停止后的清理。 */
+
 import type { RuntimeCollection, SelectionValue } from './runtime-types.js'
 import type { AnimationOptions, TweenState, Complete, Easing, Speed } from './index.js'
 import type { ScrollKey } from './style.js'
@@ -43,6 +45,7 @@ function pending(element: object) {
     return state
 }
 
+/** 同一元素的普通动画串行运行。回调异常时仍推进队列，并向调用方抛出原错误。 */
 function dequeue(element: object, state: ScheduleState) {
     if (state.active) return
     const job = state.waiting.shift()
@@ -97,7 +100,7 @@ function animatedValue(element: SelectionValue, key: string, target: string | nu
     const match = typeof format === 'string' ? numeric.exec(format) : undefined
     if (!match) return { apply: (progress: number) => { if (progress === 1) change(target) } }
     const [, relative, number, suffix] = match
-    // The get hook runs before the starting value and unit are known.
+    // 先调用 get 钩子读取起始值，再据此补齐补间的起点与单位。
     const tween = { elem: element, prop: key, options, now: 0 } as TweenValues
     const computedValue = hook?.get ? hook.get(tween) : scrolling ? readScroll(element, key as ScrollKey) : readStyle(element, key)
     const unit = suffix || (scrolling || cssNumber[camelCase(key)] || key.startsWith('--') ? '' : 'px')
@@ -127,6 +130,7 @@ function animatedValue(element: SelectionValue, key: string, target: string | nu
 
 function readUnit(value: string | number | undefined, fallback: string) { return String(value ?? '').match(/[a-z%]+$/i)?.[0] ?? fallback }
 
+/** 单次动画将完成、取消和出错统一送进清理分支。清理后才能推进下一任务。 */
 function schedule(element: SelectionValue, properties: Properties, options: Options,
     prepare?: (element: SelectionValue) => boolean | void,
     finalize?: (element: SelectionValue, complete: boolean) => void) {
@@ -173,6 +177,7 @@ function schedule(element: SelectionValue, properties: Properties, options: Opti
                 next()
             }
         }
+        // 队列中的初始帧可以同步完成或触发停止。先登记清理函数，确保回调能找到当前动画。
         state.running.add(finish)
         step(begin)
     }

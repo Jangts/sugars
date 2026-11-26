@@ -1,4 +1,7 @@
 // TangramJS util/type.js:69
+
+/* 识别 DOM 集合或全部成员均为元素的数组、类数组。其他值保留旧返回语义。 */
+
 import isElement from './isElement.js'
 
 export default function isElements(object: unknown) {

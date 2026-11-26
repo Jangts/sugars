@@ -1,10 +1,9 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `perl` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 区分 Perl 的正则、字符串和带前缀的变量。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 highlight.languages.perl = {
@@ -18,7 +17,7 @@ highlight.languages.perl = {
             lookbehind: true
         }
     ],
-    // TODO Could be nice to handle Heredoc too.
+    // 待补充 Heredoc 词法。
     'string': [
         // q/.../
         /\b(?:q|qq|qx|qw)\s*([^a-zA-Z0-9\s\{\(\[<])(?:[^\\]|\\[\s\S])*?\1/,
@@ -42,9 +41,10 @@ highlight.languages.perl = {
         /("|`)(?:[^\\]|\\[\s\S])*?\1/,
 
         // '...'
-        // FIXME Multi-line single-quoted strings are not supported as they would break variables containing '
+        // 暂未支持多行单引号字符串，以免误伤包含单引号的变量。
         /'(?:[^'\\\r\n]|\\.)*'/
     ],
+    // m、s 等运算支持多种成对分隔符。规则按分隔符分别匹配，避免通用斜线分支误吞除法。
     'regex': [
         // m/.../
         /\b(?:m|qr)\s*([^a-zA-Z0-9\s\{\(\[<])(?:[^\\]|\\[\s\S])*?\1[msixpodualngc]*/,
@@ -64,8 +64,8 @@ highlight.languages.perl = {
         // m<...>
         /\b(?:m|qr)\s*<(?:[^<>\\]|\\[\s\S])*>[msixpodualngc]*/,
 
-        // The lookbehinds prevent -s from breaking
-        // FIXME We don't handle change of separator like s(...)[...]
+        // 后顾用于保留 -s 的原匹配。
+        // 暂未支持 s(...)[...] 这样的混用定界符。
         // s/.../.../
         {
             pattern: /(^|[^-]\b)(?:s|tr|y)\s*([^a-zA-Z0-9\s\{\(\[<])(?:[^\\]|\\[\s\S])*?\2(?:[^\\]|\\[\s\S])*?\2[msixpodualngcer]*/,
@@ -103,13 +103,12 @@ highlight.languages.perl = {
         },
 
         // /.../
-        // The look-ahead tries to prevent two divisions on
-        // the same line from being highlighted as regex.
-        // This does not support multi-line regex.
+        // 前瞻用于避免把同一行的两个除号误判为正则边界。
+        // 这条规则只处理单行正则。
         /\/(?:[^\/\\\r\n]|\\.)*\/[msixpodualngc]*(?=\s*(?:$|[\r\n,.;})&|\-+*~<>!?^]|(lt|gt|le|ge|eq|ne|cmp|not|and|or|xor|x)\b))/
     ],
 
-    // FIXME Not sure about the handling of ::, ', and #
+    // ::、单引号和 # 的部分组合仍待核对。
     'variable': [
         // ${^POSTMATCH}
         /[&*$@%]\{\^[A-Z]+\}/,
@@ -122,7 +121,7 @@ highlight.languages.perl = {
         // $1
         /[&*$@%]\d+/,
         // $_, @_, %!
-        // The negative lookahead prevents from breaking the %= operator
+        // 否定前瞻避免拆开 %= 运算符。
         /(?!%=)[$@%][!"#$ % &'()*+,\-.\/:;<=>?@[\\\]^_`{|}~]/
     ],
     'filehandle ': {

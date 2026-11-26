@@ -1,4 +1,7 @@
 /*! Ported from TangramJS form/SimpleEditor/emoticons/default.js. */
+
+/* 默认表情名称到随编辑器交付的 GIF 文件映射。 */
+
 export const defaultEmoticons: Readonly<Record<string, string>> = {
     '微笑': new URL('./emoticons/wx.gif', import.meta.url).href,
     '晕': new URL('./emoticons/y.gif', import.meta.url).href,

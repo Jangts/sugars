@@ -1,10 +1,9 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `twig` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 标记 Twig 的模板指令、插值和注释，并复用外围标记词法。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 highlight.languages.twig = {
@@ -45,9 +44,10 @@ highlight.languages.twig = {
         }
     },
 
-    // The rest can be parsed as HTML
+    // 其余内容交给 HTML 词法。
+    // 先标记模板标签和注释，余下非空白文本才进入标记词法。
     'other': {
-        // We want non-blank matches
+        // 排除空白匹配。
         pattern: /\S(?:[\s\S]*\S)?/,
         inside: highlight.languages.markup
     }

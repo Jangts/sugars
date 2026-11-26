@@ -1,3 +1,5 @@
+/* 对象分类入口，汇总复制、合并、成员扩展与查询字符串转换。 */
+
 export { default as clone } from './clone.js'
 export { default as copy } from './copy.js'
 export { default as extend } from './extend.js'

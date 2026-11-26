@@ -1,3 +1,5 @@
+/* 定义行情输入、布局配置、指标选择、主题和图表实例的共享公共类型。 */
+
 import type { KLineBar } from './DataProvider.js'
 
 import type { ChartName } from './charts/index.js'
@@ -8,13 +10,21 @@ export interface Size {
 }
 
 export interface KLineOptions {
+    /** 宿主元素或现有元素 ID。实例会创建自己的交互表面。 */
     element: HTMLElement | string
+    /** 表面宽度，数值为 CSS 像素，其他值采用 CSS 长度，null 使用 100%。 */
     width?: string | number | null
+    /** 表面高度，数值为 CSS 像素，其他值采用 CSS 长度，null 使用 100%。 */
     height?: string | number | null
+    /** 是否按设备像素比扩展画布像素尺寸，逻辑坐标仍使用 CSS 像素。默认开启。 */
     useRetinaScale?: boolean
+    /** 暗色主题是否用旧规则给符合尺寸条件的上涨蜡烛画空心柱体。 */
     drawPseudoUpDown?: boolean
+    /** 按从上到下的顺序指定主图、副图和指标，缺省为 MA、Volume、MACD。 */
     layoutConf?: readonly ChartName[]
+    /** 初始化的历史行情。null 与省略都表示空行情。 */
     data?: readonly KLineBar[] | null
+    /** 覆盖默认主题的局部颜色与字体样式。 */
     theme?: Partial<ThemeInterface>
 }
 

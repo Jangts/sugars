@@ -1,20 +1,20 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `css` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 在样式表中区分选择器、属性和函数参数，遇到标记内的样式时复用同一套规则。
  */
+
 import { highlighter as highlight } from '../core.js'
 import { cloneGrammar, grammarPattern, insideGrammar } from '../grammar.js'
 
 highlight.languages.css = {
     'comment': /\/\*[\w\W]*?\*\//,
+    // 先消费整条 at 规则，然后标记规则名并通过 rest 匹配剩余内容。把两步分开可保住规则的结束边界。
     'atrule': {
         pattern: /@[\w-]+?.*?(;|(?=\s*\{))/i,
         inside: {
             'rule': /@[\w-]+/
-                // See rest below
+                // 嵌套规则在下方补入。
         }
     },
     'url': /url\((?:(["'])(\\(?:\r\n|[\w\W])|(?!\1)[^\\\r\n])*\1|.*?)\)/i,

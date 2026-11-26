@@ -1,4 +1,7 @@
 // TangramJS src/str/hash.js, MD5 pseudoIdentity for reading historical localStorage keys.
+
+/* 保留旧 Sheet 分片键的哈希算法，供新版本识别历史存储数据。 */
+
 const chrsz = 8;
 
 function rol(num: number, cnt: number) {
@@ -29,7 +32,7 @@ function safe_add(x: number, y: number) {
 }
 
 function core_md5(x: number[], len: number) {
-    /* append padding */
+    /* 追加旧哈希格式要求的填充位。 */
     x[len >> 5] = (x[len >> 5] ?? 0) | 0x80 << ((len) % 32);
     x[(((len + 64) >>> 9) << 4) + 14] = len;
 

@@ -1,4 +1,7 @@
 // TangramJS obj/obj.js:16
+
+/* 原地合并嵌套对象。数组整项覆盖，__proto__ 走数据字段写入。 */
+
 import each from '../each.js'
 import writeValue from './writeValue.js'
 

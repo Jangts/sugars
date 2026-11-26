@@ -1,3 +1,5 @@
+/* 按旧 DOM 的节点编号应用虚拟树补丁，返回补丁后的根节点供挂载者维护引用。 */
+
 import type { Move } from './list-diff.js'
 import type { VElementProps, VNode } from './v-element.js'
 
@@ -17,6 +19,7 @@ export type Patches = Record<number, PatchOperation[]>
 
 const skippedChildren = new WeakMap<Patches, Map<number, number>>()
 
+/** 记录跳过的后代数量，使不进入某个子树时仍能继续按旧树编号访问其后节点。 */
 export function skipPatchChildren(patches: Patches, index: number, count: number): void {
     let skips = skippedChildren.get(patches)
     if (!skips) {
@@ -26,7 +29,7 @@ export function skipPatchChildren(patches: Patches, index: number, count: number
     skips.set(index, count)
 }
 
-// Style and form values follow TangramJS src/dom/dom.js, set and removeAttr.
+// 样式与表单值沿用 TangramJS src/dom/dom.js 中 set 和 removeAttr 的处理。
 export function setProps(node: HTMLElement, props: VElementProps): void {
     for (const [key, value] of Object.entries(props)) {
         const name = key === 'className' ? 'class' : key === 'htmlFor' ? 'for' : key
@@ -91,6 +94,7 @@ function applyPatches(node: Node, currentPatches: PatchOperation[], doc: Documen
     return node
 }
 
+/** 先按旧位置遍历后代，再应用当前节点补丁，避免替换或重排改变后代索引。 */
 function dfsWalk(node: Node, walker: { index: number }, patches: Patches, doc: Document, skips?: Map<number, number>): Node {
     const currentPatches = patches[walker.index]
     const skip = skips?.get(walker.index)

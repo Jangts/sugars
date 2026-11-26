@@ -1,21 +1,39 @@
+/**
+ * `@sugars/animation` 的公开入口。
+ *
+ * 按场景与帧推进时间轴。播放器管理定位、循环和完成通知，渲染交给场景回调，时钟可由调用方提供。
+ * `Animation` 负责定位、播放与结束通知，`AnimationScene`、`AnimationFrame` 和 `AnimationClock` 约定调用方的渲染和计时接口。
+ */
+
+/** 一次渲染对应的只读位置。场景、帧和循环轮次从零开始，进度为 0 到 1。 */
 export interface AnimationFrame {
+    /** 场景在构造时传入序列里的从零索引。 */
     readonly scene: number
+    /** 场景内从 0 到 lastFrame 的帧号，两个端点均可定位。 */
     readonly frame: number
+    /** 场景时长乘以目标帧率后向上取整得到的末帧号。 */
     readonly lastFrame: number
+    /** 从零计数的完整播放轮次。 */
     readonly iteration: number
+    /** 当前帧在本场景的位置，单位为毫秒。 */
     readonly elapsed: number
+    /** frame 与 lastFrame 的比值，范围为 0 到 1。 */
     readonly progress: number
 }
 
 type FrameCallback = (frame: AnimationFrame) => void
 
+/** 以毫秒描述一个场景，并提供其渲染与完成回调。 */
 export interface AnimationScene {
-    /** Scene duration in milliseconds. */
+    /** 场景时长，单位为毫秒。 */
     duration: number
+    /** 初始位置与后续帧均交给此回调绘制。 */
     render: FrameCallback
+    /** 播放到当前场景的末帧后调用。 */
     onComplete?: FrameCallback
 }
 
+/** 时钟的 now() 和帧回调时间戳须采用同一时间基准。 */
 export interface AnimationClock {
     now(): number
     request(callback: (timestamp: number) => void): number
@@ -23,9 +41,13 @@ export interface AnimationClock {
 }
 
 export interface AnimationOptions {
+    /** 场景每秒帧数，默认 36。RAF 间隔长时仍可能跳帧。 */
     fps?: number
+    /** 播放完整场景序列的次数，默认 1。Infinity 表示持续循环。 */
     iterations?: number
+    /** 完成全部轮次后调用，参数为最终场景末帧位置。 */
     onComplete?: FrameCallback
+    /** 提供调度、取消和统一时间基准。缺省使用浏览器的 RAF 时钟。 */
     clock?: AnimationClock
 }
 
@@ -51,6 +73,12 @@ export class Animation {
     private running = false
     private completed = false
 
+    /**
+     * 创建播放器，初始位置为第一个场景的第 0 帧。
+     * @param scenes - 非空场景序列，时长须为正的有限毫秒数。
+     * @param options - 控制帧率、播放轮次、时钟与完成回调。
+     * @throws {RangeError} 场景、帧数、帧率或轮次无效。
+     */
     constructor(scenes: readonly AnimationScene[], { fps = 36, iterations = 1, clock = browserClock, onComplete }: AnimationOptions = {}) {
         if (!Number.isFinite(fps) || fps <= 0) throw new RangeError('fps must be a positive finite number')
         if (iterations !== Infinity && (!Number.isSafeInteger(iterations) || iterations < 1)) {
@@ -78,6 +106,11 @@ export class Animation {
         return this.running
     }
 
+    /**
+     * 从当前场景和帧恢复。完整播放结束后再次调用会回到起点。
+     *
+     * @returns 当前播放器，供连续调用。回调异常会向调用方传播。
+     */
     play(): this {
         if (this.running) return this
         if (this.completed) {
@@ -92,6 +125,11 @@ export class Animation {
         return this
     }
 
+    /**
+     * 取消已排队的帧并保留当前播放位置。
+     *
+     * @returns 保留当前播放位置的播放器。
+     */
     stop(): this {
         this.playback++
         this.running = false
@@ -102,21 +140,45 @@ export class Animation {
         return this
     }
 
+    /**
+     * 定位到指定场景后开始播放，越界帧号按该场景的首末帧收敛。
+     *
+     * @param scene - 从零计数的场景索引。
+     * @param frame - 场景内的位置，默认 0。
+     * @returns 当前播放器。
+     * @throws {RangeError} 场景不存在或帧值非有限。
+     */
     gotoAndPlay(scene: number, frame = 0): this {
         this.seek(scene, frame)
         return this.play()
     }
 
+    /**
+     * 定位后同步渲染一次，不触发场景完成通知。
+     *
+     * @param scene - 从零计数的场景索引。
+     * @param frame - 要同步渲染的帧，默认 0。
+     * @returns 已停止于目标位置的当前播放器。
+     * @throws {RangeError} 场景不存在或帧值非有限。
+     */
     gotoAndStop(scene: number, frame = 0): this {
         this.seek(scene, frame)
         this.notify(this.scenes[scene]!.render)
         return this
     }
 
+    /**
+     * 在当前场景内前进一帧并停止，末帧之后仍停在末帧。
+     * @returns 当前播放器。
+     */
     next(): this {
         return this.gotoAndStop(this.current.scene, this.current.frame + 1)
     }
 
+    /**
+     * 在当前场景内后退一帧并停止，第 0 帧之前仍停在起点。
+     * @returns 当前播放器。
+     */
     prev(): this {
         return this.gotoAndStop(this.current.scene, this.current.frame - 1)
     }
@@ -147,6 +209,7 @@ export class Animation {
         }
     }
 
+    /** 渲染与完成回调可能重入并定位或停止。用播放序号阻止旧回调继续调度。 */
     private isPlaying(playback: number): boolean {
         return this.running && playback === this.playback
     }
@@ -161,6 +224,7 @@ export class Animation {
         }
     }
 
+    /** RAF 间隔长时可跳过中间帧，仍会先绘制末帧再通知场景完成。 */
     private tick(timestamp: number, playback: number): void {
         if (!this.isPlaying(playback)) return
         this.frameRequest = undefined

@@ -1,18 +1,31 @@
+/**
+ * `@sugars/3d-pictures` 的公开入口。
+ *
+ * 将图片序列挂到展示容器，按拖动距离或调用方设置的帧索引切换图片。实例负责预加载、输入监听和销毁后的 DOM 恢复。
+ * `Pictures3D` 接收现有节点、URL 列表、编号文件或 JSON 清单，`ThreeDimensionalEyes` 是同一构造器的历史别名。
+ */
+
 import { observe } from '@sugars/simple-mvvm/observer'
 import type { Listener } from '@sugars/simple-mvvm/observer'
 
 export interface PictureFolder {
+    /** 编号文件名的路径前缀，例如 /turntable/frame-。 */
     imagePath: string
+    /** 要生成的文件数，默认 36。URL 编号从 1 开始。 */
     totalImages?: number
+    /** 初始帧的内部索引，默认 0，并按总数循环。 */
     defaultImageNumber?: number
+    /** 不带点的文件扩展名，默认 png。 */
     imageExtension?: string
 }
 
+/** 显式来源支持 URL 数组、生成文件名的配置或 JSON 清单地址。省略时读取容器中的图片节点。 */
 export type PictureSource = readonly string[] | PictureFolder | string
 
 // TangramJS src/see/Photos/{ThreeDimensionalEyes,Photos}.js
 export class Pictures3D {
     readonly Element: HTMLElement
+    /** 图片来源解析完毕后完成，空图片序列也可完成。显式预加载另由 loading() 负责。 */
     readonly ready: Promise<void>
     #images: string[] = []
     #active = { cur: 0 }
@@ -26,6 +39,11 @@ export class Pictures3D {
     #initialStyle: { backgroundImage: string; position: string; cursor: string; touchAction: string }
     start = 0
 
+    /**
+     * @param stage - 展示容器或现有元素的 ID。
+     * @param source - URL 列表、文件名配置或 JSON 清单。省略时读取容器内的帧图片。
+     * @throws {TypeError} 找不到展示容器。
+     */
     constructor(stage: HTMLElement | string, source?: PictureSource) {
         const element = typeof stage === 'string' ? document.getElementById(stage) : stage
         if (!element) throw new TypeError('Pictures3D needs a stage element')
@@ -113,10 +131,16 @@ export class Pictures3D {
         this.#loadingArea = box
     }
 
+    /**
+     * 复用同一次预加载任务。所有帧各自结算后才隐藏进度条，随后接入拖动。
+     *
+     * @returns 本实例的同一项预加载任务。清单请求失败时沿用 ready 的拒绝原因。
+     */
     loading(): Promise<void> {
         return this.#preload ??= this.#loadFrames()
     }
 
+    /** 图片成功、加载出错或实例销毁都结算本帧，避免进度和预加载任务一直挂起。 */
     async #loadFrames(): Promise<void> {
         await this.ready
         const box = this.#loadingArea
@@ -173,15 +197,26 @@ export class Pictures3D {
         return this
     }
 
+    /**
+     * 按相邻指针坐标差累计切帧步数，沿用旧实现按 25 像素分档的规则。
+     *
+     * @param end - 本次指针的 clientX，单位为 CSS 像素。
+     * @returns 处理位移后仍可链式调用的实例。
+     */
     change(end: number): this {
         const distance = end - this.start
         if (!Number.isFinite(distance)) return this
         this.start = end
+        // 沿用旧实现的严格分档。正好移动 25 像素时还未越过第一档。
         const steps = Math.max(0, Math.ceil(Math.abs(distance) / 25) - 1)
         if (steps) this.cur += Math.sign(distance) * steps
         return this
     }
 
+    /**
+     * 根据当前帧更新容器背景图。
+     * @returns 当前展示实例。
+     */
     play(): this {
         const frame = this.#images[this.cur]
         if (frame !== undefined && !this.#events.signal.aborted) {
@@ -191,6 +226,7 @@ export class Pictures3D {
         return this
     }
 
+    /** 终止输入与加载监听，移除实例创建的节点并还原调用方容器的样式。 */
     destroy(): void {
         if (this.#events.signal.aborted) return
         this.#events.abort()

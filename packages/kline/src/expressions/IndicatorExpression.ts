@@ -1,3 +1,5 @@
+/* 实现依赖历史行情的滚动与递推表达式，负责各节点的缓存与重置。 */
+
 import type { DataProvider } from '../DataProvider.js'
 import type { Expression } from './Expression.js'
 import { DataExpression } from './DataExpression.js'

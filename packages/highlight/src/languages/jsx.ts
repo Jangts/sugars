@@ -1,10 +1,9 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `jsx` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 扩展标记和 JavaScript 规则，识别标签属性值与花括号表达式。
  */
+
 import { highlighter as highlight } from '../core.js'
 import { cloneGrammar, grammarPattern, insideGrammar } from '../grammar.js'
 
@@ -22,12 +21,13 @@ delete jsxExpression.punctuation
 jsxExpression = highlight.languages.insertBefore('jsx', 'operator', {
     'punctuation': /=(?={)|[{}[\];(),.:]/
 }, {
+    // 正文中的花括号片段需要交给 JavaScript 词法，装配时复用标签与表达式规则。
     jsx: jsxExpression
 });
 
 highlight.languages.insertBefore('inside', 'attr-value', {
         'script': {
-            // Allow for one level of nesting
+            // 允许一层嵌套。
             pattern: /=(\{(?:\{[^}]*\}|[^}])+\})/i,
             inside: jsxExpression,
             'alias': 'language-javascript'

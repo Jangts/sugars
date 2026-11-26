@@ -1,4 +1,7 @@
 /*! Ported from TangramJS painter/Charts/components/sharps/Line.js. */
+
+/* 为相邻数据点绘制直线或平滑曲线。相邻线段提供控制点和连续路径所需的上下文。 */
+
 import { ChartElement } from '../Abstract.js'
 import { drawDashLine } from '../../util/canvas.js'
 import * as helpers from '../../util/helpers.js'

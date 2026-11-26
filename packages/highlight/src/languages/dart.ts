@@ -1,10 +1,9 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `dart` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 识别 Dart 的关键字、注解与多种引号形式，包括带 r 前缀的原始字符串。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 highlight.languages.dart = highlight.languages.extend('clike', {
@@ -14,6 +13,7 @@ highlight.languages.dart = highlight.languages.extend('clike', {
 });
 
 highlight.languages.insertBefore('dart', 'function', {
+    // 注解有独立标记，可保留注解名称和普通关键字之间的区别。
     'metadata': {
         pattern: /@\w+/,
         alias: 'symbol'

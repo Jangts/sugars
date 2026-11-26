@@ -1,3 +1,5 @@
+/* 横竖布局、无缝衔接、三栏和淡入淡出预设提供各自的轨道结构与切换动作。 */
+
 import type { Swiper, SwiperPreset } from './index.js'
 
 export type PresetName = 'slide' | 'slide-vert' | 'seamless' | 'seamless-vert' | 'colx3' | 'colx3-vert' | 'fade'

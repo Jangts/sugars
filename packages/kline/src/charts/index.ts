@@ -1,3 +1,5 @@
+/* 汇总主图、成交量和指标图的实现，供 K 线实例装配。 */
+
 import { MAChart, SMAChart, EMAChart, BOLLChart } from './price.js'
 import { MACDChart, KDJChart, RSIChart, WRChart } from './indicators.js'
 import { VolumeChart } from './VolumeChart.js'

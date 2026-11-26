@@ -1,4 +1,7 @@
 /*! Ported from TangramJS painter/Charts/components/Tooltip.js. */
+
+/* 绘制单数据项提示，按文字尺寸、数据点位置和画布边界放置标签。 */
+
 import { ChartElement } from './Abstract.js'
 import { fontString } from '../util/canvas.js'
 import { drawRoundedRectangle } from '../util/canvas.js'
@@ -13,7 +16,7 @@ export class Tooltip extends ChartElement {
             this.xAlign = "center";
             this.yAlign = "above";
 
-            //Distance between the actual element.y position and the start of the tooltip caret
+            // 数据点与提示框箭头起点之间的距离。
             var caretPadding = this.caretPadding = 2;
 
             var tooltipWidth = ctx.measureText(this.text).width + 2 * this.xPadding,
@@ -36,14 +39,14 @@ export class Tooltip extends ChartElement {
             ctx.globalAlpha = 0.75;
             ctx.fillStyle = this.fillColor;
 
-            // Custom Tooltips
+            // 调用方提供提示回调时，用它接管绘制。
             if (this.custom) {
                 ctx.globalAlpha = 1;
                 this.custom(this);
             } else {
                 switch (this.yAlign) {
                     case "above":
-                        //Draw a caret above the x/y
+                        // 绘制位于数据点上方的箭头。
                         ctx.beginPath();
                         ctx.moveTo(this.x, this.y - caretPadding);
                         ctx.lineTo(this.x + this.caretHeight, this.y - (caretPadding + this.caretHeight));
@@ -53,7 +56,7 @@ export class Tooltip extends ChartElement {
                         break;
                     case "below":
                         tooltipY = this.y + caretPadding + this.caretHeight;
-                        //Draw a caret below the x/y
+                        // 绘制位于数据点下方的箭头。
                         ctx.beginPath();
                         ctx.moveTo(this.x, this.y + caretPadding);
                         ctx.lineTo(this.x + this.caretHeight, this.y + caretPadding + this.caretHeight);

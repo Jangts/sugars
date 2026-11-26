@@ -1,15 +1,15 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `autoit` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 区分 AutoIt 指令、变量、宏和函数。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 highlight.languages.autoit = {
+    // 兼容 AutoIt 为块注释指令加分号前缀的写法。块边界仍由注释指令本身决定。
     "comment": [/;.*/, {
-        // The multi-line comments delimiters can actually be commented out with ";"
+        // 多行注释的定界符可以带分号注释前缀。
         pattern: /(^\s*)#(?:comments-start|cs)[\s\S]*?^\s*#(?:comments-end|ce)/m,
         lookbehind: true
     }],
@@ -29,7 +29,7 @@ highlight.languages.autoit = {
         alias: 'keyword'
     },
     "function": /\b\w+(?=\()/,
-    // Variables and macros
+    // 变量与宏。
     "variable": /[$@]\w+/,
     "keyword": /\b(?:Case|Const|Continue(?:Case|Loop)|Default|Dim|Do|Else(?:If)?|End(?:Func|If|Select|Switch|With)|Enum|Exit(?:Loop)?|For|Func|Global|If|In|Local|Next|Null|ReDim|Select|Static|Step|Switch|Then|To|Until|Volatile|WEnd|While|With)\b/i,
     "number": /\b(?:0x[\da-f]+|\d+(?:\.\d+)?(?:e[+-]?\d+)?)\b/i,
@@ -37,7 +37,7 @@ highlight.languages.autoit = {
     "operator": /<[=>]?|[-+*\/=&>]=?|[?^]|\b(?:And|Or|Not)\b/i,
     "punctuation": /[\[\]().,:]/
 };
-// NOTES - follows first-first highlight method, block is locked after highlight, different from SyntaxHl
+// 此处按首个匹配规则处理，已标记的片段不会按后续规则重标。
 highlight.languages.autohotkey = {
     'comment': {
         pattern: /(^[^";\n]*("[^"\n]*?"[^"\n]*?)*)(;.*$|^\s*\/\*[\s\S]*\n\*\/)/m,
@@ -45,9 +45,9 @@ highlight.languages.autohotkey = {
     },
     'string': /"(([^"\n\r]|"")*)"/m,
     'function': /[^\(\); \t,\n\+\*\-=\?>:\\\/<&%\[\]]+?(?=\()/m,
-    //function - don't use .*\) in the end bcoz string locks it
+    // 函数规则只检查名称及开括号，参数中已有字符串标记。
     'tag': /^[ \t]*[^\s:]+?(?=:(?:[^:]|$))/m,
-    //labels
+    // 标签。
     'variable': /%\w+%/,
     'number': /\b-?(0x[\dA-Fa-f]+|\d*\.?\d+([Ee]-?\d+)?)\b/,
     'operator': /\?|\/\/?=?|:=|\|[=|]?|&[=&]?|\+[=+]?|-[=-]?|\*[=*]?|<(?:<=?|>|=)?|>>?=?|[.^!=~]=?|\b(?:AND|NOT|OR)\b/,

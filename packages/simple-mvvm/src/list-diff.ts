@@ -1,3 +1,5 @@
+/* 用 key 与无 key 项的相对顺序对齐前后列表，算出可复用节点和插入、移除动作。 */
+
 import type { VNode } from './v-element.js'
 
 export type Move =
@@ -20,7 +22,12 @@ function makeKeyIndexAndFree(list: readonly VNode[]) {
 }
 
 // TangramJS src/arr/diff.js. Align old children to their new counterparts, then
-// simulate the reorder so each move is relative to the preceding moves.
+// 逐次模拟重排，让每一步的索引相对于上一步结果计算。
+/**
+ * @param oldList - 已存在的子节点序列。
+ * @param newList - 下一次渲染需要的子节点序列。
+ * @returns 与旧节点对齐的 children 映射以及按应用顺序排列的 moves。
+ */
 export function listDiff(oldList: readonly VNode[], newList: readonly VNode[]) {
     const { keyIndex: newKeyIndex, free: newFree } = makeKeyIndexAndFree(newList)
     const moves: Move[] = []
@@ -40,8 +47,7 @@ export function listDiff(oldList: readonly VNode[], newList: readonly VNode[]) {
         }
     }
 
-    // Track each matched child's destination so a moved unkeyed child cannot
-    // get confused with a later unkeyed child in the same list.
+    // 为每个匹配项记录目标索引，防止移走的无 key 节点与后续无 key 项错配。
     for (const [i, item] of newList.entries()) {
         if (simulateList[i] === i) continue
         const from = simulateList.indexOf(i, i + 1)

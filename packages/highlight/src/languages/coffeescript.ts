@@ -1,13 +1,12 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `coffeescript` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 识别 CoffeeScript 插值、块正则、隐式对象成员和内嵌 JavaScript。
  */
+
 import { highlighter as highlight } from '../core.js'
 
-// Ignore comments starting with { to privilege string interpolation highlighting
+// 让插值表达式优先于以花括号起始的注释候选。
 var comment = /#(?!\{).+/,
     interpolation = {
         pattern: /#\{[^}]+\}/,
@@ -18,11 +17,11 @@ highlight.languages.coffeescript = highlight.languages.extend('javascript', {
     'comment': comment,
     'string': [
 
-        // Strings are multiline
+        // 字符串可以跨行。
         / '(?:\\?[^\\])*?' /,
 
         {
-            // Strings are multiline
+            // 字符串可以跨行。
             pattern: /"(?:\\?[^\\])*?"/,
             inside: {
                 'interpolation': interpolation
@@ -42,7 +41,8 @@ highlight.languages.insertBefore('coffeescript', 'comment', {
         alias: 'comment'
     },
 
-    // Block regexp can contain comments and interpolation
+    // 正则块内部包含注释与插值。
+    // 块正则允许内部注释和插值。词法需保留整块，再识别其内部成员。
     'block-regex': {
         pattern: /\/{3}[\s\S]*?\/{3}/,
         alias: 'regex',
@@ -65,7 +65,7 @@ highlight.languages.insertBefore('coffeescript', 'string', {
         }
     },
 
-    // Block strings
+    // 块字符串。
     'multiline-string': [{
             pattern: /'''[\s\S]*?'''/,
             alias: 'string'
@@ -82,6 +82,6 @@ highlight.languages.insertBefore('coffeescript', 'string', {
 });
 
 highlight.languages.insertBefore('coffeescript', 'keyword', {
-    // Object property
+    // 对象属性。
     'property': /(?!\d)\w+(?=\s*:(?!:))/
 });

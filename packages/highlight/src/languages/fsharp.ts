@@ -1,10 +1,9 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `fsharp` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 识别 F# 注释、指令、数值和字符串边界。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 highlight.languages.fsharp = highlight.languages.extend('clike', {
@@ -25,6 +24,7 @@ highlight.languages.fsharp = highlight.languages.extend('clike', {
     ]
 });
 highlight.languages.insertBefore('fsharp', 'keyword', {
+    // 指令单独标记，保留编译条件与普通 F# 表达式之间的视觉区别。
     'preprocessor': {
         pattern: /^[^\r\n\S]*#.*/m,
         alias: 'property',

@@ -1,15 +1,15 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `mizar` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 区分 Mizar 的证明关键字、参数与变量声明。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 highlight.languages.mizar = {
     'comment': /::.+/,
     'keyword': /@proof\b|\b(?:according|aggregate|all|and|antonym|are|as|associativity|assume|asymmetry|attr|be|begin|being|by|canceled|case|cases|clusters?|coherence|commutativity|compatibility|connectedness|consider|consistency|constructors|contradiction|correctness|def|deffunc|define|definitions?|defpred|do|does|equals|end|environ|ex|exactly|existence|for|from|func|given|hence|hereby|holds|idempotence|identity|iff?|implies|involutiveness|irreflexivity|is|it|let|means|mode|non|not|notations?|now|of|or|otherwise|over|per|pred|prefix|projectivity|proof|provided|qua|reconsider|redefine|reduce|reducibility|reflexivity|registrations?|requirements|reserve|sch|schemes?|section|selector|set|sethood|st|struct|such|suppose|symmetry|synonym|take|that|the|then|theorems?|thesis|thus|to|transitivity|uniqueness|vocabular(?:y|ies)|when|where|with|wrt)\b/,
+    // 参数使用专门的记号类别，和证明过程中的普通标识符分开着色。
     'parameter': {
         pattern: /\$(?:10|\d)/,
         alias: 'variable'

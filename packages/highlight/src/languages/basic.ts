@@ -1,13 +1,13 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `basic` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 识别 BASIC 的行注释、字符串、数字及语句和函数名。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 highlight.languages.basic = {
+    // 注释规则依赖字符串已被切出，防止将字符串中的注释起始文本当成真正的行尾注释。
     'string': /"(?:""|[!#$%&'()*,\/:;<=>?^_ +\-.A-Z\d])*"/i,
     'comment': {
         pattern: /(?:!|REM\b).+/i,

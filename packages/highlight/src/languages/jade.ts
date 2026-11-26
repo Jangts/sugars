@@ -1,33 +1,26 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `jade` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 识别 Jade 标签、过滤器和流程控制。脚本与对应的过滤内容交给嵌套词法。
  */
+
 import { highlighter as highlight } from '../core.js'
 import type { Grammar } from '../grammar.js'
 
-// TODO:
-// - Add CSS highlighting inside <style> tags
-// - Add support for multi-line code blocks
-// - Add support for interpolation #{} and !{}
-// - Add support for tag interpolation #[]
-// - Add explicit support for plain text using |
-// - Add support for markup embedded in plain text
+// 旧规则的待补项包括 style 内 CSS、多行代码块、#{}、!{} 与 #[] 插值，以及用竖线引入的文本和其中的标记。
 
 highlight.languages.jade = {
 
-    // Multiline stuff should appear before the rest
+    // 多行结构须先于普通规则匹配。
 
-    // This handles both single-line and multi-line comments
+    // 覆盖单行注释及缩进的多行注释。
     'comment': {
         pattern: /(^([\t ]*))\/\/.*((?:\r?\n|\r)\2[\t ]+.+)*/m,
         lookbehind: true
     },
 
-    // All the tag-related part is in lookbehind
-    // so that it can be highlighted by the "tag" pattern
+    // 标签部分保留在后顾范围内，交给 tag 规则处理。
+    // 脚本块要连同缩进内的行一起匹配，避免后续标签规则在代码片段里误找标签。
     'multiline-script': {
         pattern: /(^([\t ]*)script\b.*\.[\t ]*)((?:\r?\n|\r(?!\n))(?:\2[\t ]+.+|\s*?(?=\r?\n|\r)))+/m,
         lookbehind: true,
@@ -36,7 +29,7 @@ highlight.languages.jade = {
         }
     },
 
-    // See at the end of the file for known filters
+    // 支持的过滤器在文件末尾登记。
     'filter': {
         pattern: /(^([\t ]*)):.+((?:\r?\n|\r(?!\n))(?:\2[\t ]+.+|\s*?(?=\r?\n|\r)))+/m,
         lookbehind: true,
@@ -64,7 +57,7 @@ highlight.languages.jade = {
         lookbehind: true
     },
 
-    // This handle all conditional and loop keywords
+    // 匹配条件和循环关键字。
     'flow-control': {
         pattern: /(^[\t ]*)(?:if|unless|else|case|when|default|each|while)\b(?: .+)?/m,
         lookbehind: true,
@@ -88,7 +81,7 @@ highlight.languages.jade = {
         lookbehind: true
     },
     'mixin': [
-        // Declaration
+        // 声明。
         {
             pattern: /(^[\t ]*)mixin .+/m,
             lookbehind: true,
@@ -98,7 +91,7 @@ highlight.languages.jade = {
                 'punctuation': /[(),.]/
             }
         },
-        // Usage
+        // 调用。
         {
             pattern: /(^[\t ]*)\+.+/m,
             lookbehind: true,
@@ -163,7 +156,7 @@ highlight.languages.jade = {
 
 var filter_pattern = '(^([\\t ]*)):{{filter_name}}((?:\\r?\\n|\\r(?!\\n))(?:\\2[\\t ]+.+|\\s*?(?=\\r?\\n|\\r)))+';
 
-// Non exhaustive list of available filters and associated languages
+// 登记已支持的过滤器和对应词法。
 var filters = [
     { filter: 'atpl', language: 'twig' },
     { filter: 'coffee', language: 'coffeescript' },

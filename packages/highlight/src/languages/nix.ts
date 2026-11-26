@@ -1,20 +1,20 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `nix` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 识别 Nix 的路径、字符串和插值，插值内部重新使用 Nix 词法。
  */
+
 import { highlighter as highlight } from '../core.js'
 import { cloneGrammar, insideGrammar } from '../grammar.js'
 
 highlight.languages.nix = {
     'comment': /\/\*[\s\S]*?\*\/|#.*/,
+    // 插值允许在字符串内部递归应用 Nix 规则。转义前缀会阻止相应的插值候选。
     'string': {
         pattern: /"(?:[^"\\]|\\[\s\S])*"|''(?:(?!'')[\s\S]|''(?:'|\\|\$\{))*''/,
         inside: {
             'interpolation': {
-                // The lookbehind ensures the ${} is not preceded by \ or ''
+                // 后顾排除带反斜线或双单引号前缀的插值候选。
                 pattern: /(^|(?:^|(?!'').)[^\\])\$\{(?:[^}]|\{[^}]*\})*}/,
                 lookbehind: true,
                 inside: {
@@ -22,7 +22,7 @@ highlight.languages.nix = {
                         pattern: /^\$(?=\{)/,
                         alias: 'variable'
                     }
-                    // See rest below
+                    // 嵌套规则在下方补入。
                 }
             }
         }

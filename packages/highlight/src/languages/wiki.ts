@@ -1,14 +1,14 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `wiki` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 识别维基文本中的表格、标题、内部链接和强调标记。
  */
+
 import { highlighter as highlight } from '../core.js'
 import { grammarPattern } from '../grammar.js'
 
 highlight.languages.wiki = highlight.languages.extend('markup', {
+    // 这些块应先隔离出来，避免其内部的表格或标题样式被 Wiki 正文规则重新匹配。
     'block-comment': {
         pattern: /(^|[^\\])\/\*[\w\W]*?\*\//,
         lookbehind: true,
@@ -22,7 +22,7 @@ highlight.languages.wiki = highlight.languages.extend('markup', {
         }
     },
     'emphasis': {
-        // TODO Multi-line
+        // 多行形式待支持。
         pattern: /('{2,5}).+?\1/,
         inside: {
             'bold italic': {
@@ -46,7 +46,7 @@ highlight.languages.wiki = highlight.languages.extend('markup', {
     },
     'url': [/ISBN +(?:97[89][ -]?)?(?:\d[ -]?){9}[\dx]\b|(?:RFC|PMID) +\d+/i, /\[\[.+?\]\]|\[.+?\]/],
     'variable': [/__[A-Z]+__/,
-        // FIXME Nested structures should be handled
+        // 待补充嵌套结构处理。
         // {{formatnum:{{#expr:{{{3}}}}}}}
         /\{{3}.+?\}{3}/,
         /\{\{.+?}}/
@@ -55,7 +55,7 @@ highlight.languages.wiki = highlight.languages.extend('markup', {
         /^#redirect/im,
         /~{3,5}/
     ],
-    // Handle table attrs:
+    // 匹配表格属性。
     // {|
     // ! style="text-align:left;"| Item
     // |}
@@ -74,7 +74,7 @@ highlight.languages.wiki = highlight.languages.extend('markup', {
 });
 
 highlight.languages.insertBefore('wiki', 'tag', {
-    // Prevent highlighting inside <nowiki>, <source> and <pre> tags
+    // 跳过 nowiki、source 和 pre 标签内的维基词法。
     'nowiki': {
         pattern: /<(nowiki|pre|source)\b[\w\W]*?>[\w\W]*?<\/\1>/i,
         inside: {

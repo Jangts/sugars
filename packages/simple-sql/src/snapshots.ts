@@ -1,7 +1,11 @@
+/* 读取本地表快照并校验版本链，在支持枚举存储键的后端检测跨实例并发分支。 */
+
 import type { SheetSnapshot, StorageBackend } from './index.js'
 
 export interface SheetVersion {
+    /** 后端中的唯一版本键。 */
     id: string
+    /** 当前分支内容的副本，null 表示该分支删除了整个表。 */
     snapshot: SheetSnapshot | null
 }
 
@@ -42,6 +46,7 @@ function revisionKeys(storage: RevisionStorage, prefix: string): string[] {
     return [...keys].sort()
 }
 
+/** 连续两次枚举版本键，确保读取的是同一组键，再从父子引用推导未被替代的版本头。 */
 export function readRevisions(storage: StorageBackend, name: string): Snapshot[] {
     if (!supportsRevisions(storage)) return []
     const prefix = revisionPrefix(name)
@@ -83,6 +88,7 @@ export function sameSnapshot(left: Snapshot, right: Snapshot): boolean {
     return left.id === right.id && left.raw === right.raw
 }
 
+/** 提交前重检调用方读取的基线。可枚举的后端用独立版本键保存同源并发写入。 */
 export function writeSnapshot(
     storage: StorageBackend, name: string, parents: Snapshot[], data: SheetSnapshot | null, check: () => void,
 ): void {
@@ -93,7 +99,7 @@ export function writeSnapshot(
         return
     }
 
-    // A separate immutable key lets competing writes survive even if both read the same parent.
+    // 同一父版本上的并发写入分别使用独立的不可变键，避免互相覆盖。
     const prefix = revisionPrefix(name)
     const nonce = [...crypto.getRandomValues(new Uint8Array(16))]
         .map(byte => byte.toString(16).padStart(2, '0')).join('')
@@ -111,7 +117,7 @@ export function writeSnapshot(
         try {
             storage.removeItem(id)
         } catch {
-            // A surviving parent is ignored by readers because the child supersedes it.
+            // 旧版本即使未清理，也会因被子版本引用而退出版本头集合。
         }
     }
 }

@@ -1,14 +1,13 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `sass` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 按缩进语法识别 Sass 的指令行、变量行、属性行和选择器。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 highlight.languages.sass = highlight.languages.extend('css', {
-    // Sass comments don't need to be closed, only indented
+    // 缩进划定 Sass 注释范围，无需结束定界符。
     'comment': {
         pattern: /^([ \t]*)\/[\/*].*(?:(?:\r?\n|\r)\1[ \t]+.+)*/m,
         lookbehind: true
@@ -16,9 +15,9 @@ highlight.languages.sass = highlight.languages.extend('css', {
 });
 
 highlight.languages.insertBefore('sass', 'atrule', {
-    // We want to consume the whole line
+    // 整行作为同一个词法片段。
     'atrule-line': {
-        // Includes support for = and + shortcuts
+        // 支持 = 与 + 简写。
         pattern: /^(?:[ \t]*)[@+=].+/m,
         inside: {
             'atrule': /(?:@[\w-]+|[+=])/m
@@ -38,7 +37,7 @@ var operator = [
 ];
 
 highlight.languages.insertBefore('sass', 'property', {
-    // We want to consume the whole line
+    // 整行作为同一个词法片段。
     'variable-line': {
         pattern: /^[ \t]*\$.+/m,
         inside: {
@@ -47,7 +46,8 @@ highlight.languages.insertBefore('sass', 'property', {
             'operator': operator
         }
     },
-    // We want to consume the whole line
+    // 整行作为同一个词法片段。
+    // 按整行识别属性。其余整行规则先消耗自己的行，剩余内容才按缩进选择器处理。
     'property-line': {
         pattern: /^[ \t]*(?:[^:\s]+ *:.*|:[^:\s]+.*)/m,
         inside: {
@@ -68,8 +68,7 @@ highlight.languages.insertBefore('sass', 'property', {
 delete highlight.languages.sass.property;
 delete highlight.languages.sass.important;
 
-// Now that whole lines for other patterns are consumed,
-// what's left should be selectors
+// 其他整行结构处理完毕后，剩余行按选择器匹配。
 delete highlight.languages.sass.selector;
 highlight.languages.insertBefore('sass', 'punctuation', {
     'selector': {

@@ -1,18 +1,17 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `parigp` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 识别 PARI/GP 的数学运算符、函数名称、字符串及注释。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 highlight.languages.parigp = {
     'comment': /\/\*[\s\S]*?\*\/|\\\\.*/,
     'string': /"(?:[^"\\]|\\.)*"/,
-    // PARI/GP does not care about white spaces at all
-    // so let's process the keywords to build an appropriate regexp
+    // PARI/GP 关键字中的空白可忽略，构建正则时一并处理。
     // (e.g. "b *r *e *a *k", etc.)
+    // 关键字本身由各字符之间可插入空白的模式构造，沿用 PARI/GP 的空白规则。
     'keyword': (function() {
         var keywords = [
             'breakpoint', 'break', 'dbg_down', 'dbg_err', 'dbg_up', 'dbg_x',
@@ -27,7 +26,7 @@ highlight.languages.parigp = {
     }()),
     'function': /\w[\w ]*?(?= *\()/,
     'number': {
-        // The lookbehind and the negative lookahead prevent from breaking the .. operator
+        // 后顾和否定前瞻保护 .. 运算符的完整性。
         pattern: /((?:\. *\. *)?)(?:\d(?: *\d)*(?: *(?!\. *\.)\.(?: *\d)*)?|\. *\d(?: *\d)*)(?: *e *[+-]? *\d(?: *\d)*)?/i,
         lookbehind: true
     },

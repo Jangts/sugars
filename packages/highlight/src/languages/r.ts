@@ -1,18 +1,18 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `r` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 标记 R 的百分号运算符、特殊常量与数字。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 highlight.languages.r = {
     'comment': /#.*/,
     'string': /(['"])(?:\\?.)*?\1/,
+    // 用一对百分号识别用户操作符。它独立于普通二元运算符，保留完整的运算符名。
     'percent-operator': {
-        // Includes user-defined operators
-        // and %%, %*%, %/%, %in%, %o%, %x%
+        // 包含用户自定义运算符。
+        // 也覆盖 %%、%*%、%/%、%in%、%o% 和 %x%。
         pattern: /%[^%\s]*%/,
         alias: 'operator'
     },

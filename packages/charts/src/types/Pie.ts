@@ -1,4 +1,7 @@
 /*! Ported from TangramJS painter/Charts/types/Pie.js. */
+
+/* 将数据权重转为扇区角度与半径，保留饼图、环形图和玫瑰图各自的比例含义。 */
+
 import type { PieSeries as PieOptions, Datum } from '../types.js'
 import { SeriesRenderer, type ResolvedSeries } from './Abstract.js'
 import { Arc } from '../components/sharps/Arc.js'

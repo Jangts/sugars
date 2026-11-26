@@ -2,6 +2,12 @@
 import base64Alphabet from './internal/base64Alphabet.js'
 import utf8Encode from './internal/utf8Encode.js'
 
+/**
+ * 先把 JS 字符串转成历史 UTF-8 字节，再按每组三字节编码为 Base64。
+ *
+ * @param input - 待编码文本。非字符串按空字符串处理。
+ * @returns 使用原字节编码格式的 Base64 文本。
+ */
 export default function base64Encode(input: unknown) {
     let text = typeof input === 'string' ? input : '';
     var output = "";

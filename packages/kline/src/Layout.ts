@@ -1,10 +1,12 @@
+/* 根据画布尺寸与行情数量计算视图起止位置、柱宽和分区几何，供渲染与交互共用。 */
+
 import type { KLine } from './index.js'
 import type { Chart, PanelPosition } from './charts/Chart.js'
 import { charts } from './charts/index.js'
 import type { ChartName } from './charts/index.js'
 import type { Size } from './types.js'
 
-// Historical placements use 95% of the old height. Scale them to reach the time axis.
+// 原布局按旧高度的 95% 安排区域。缩放后图表区域的底部与时间轴相接。
 const panelExtent = .95
 const panels: readonly (readonly PanelPosition[])[] = [
     [[.05, .9]],
@@ -73,10 +75,16 @@ export class Layout {
         this.offset = this.boundOffset(visibleEnd === undefined ? 0 : count - visibleEnd)
     }
 
+    /** @param delta - 要滚动的行情柱数，符号决定方向。 */
     pan(delta: number): void {
         this.offset = this.boundOffset(this.offset + delta / this.itemWidth)
     }
 
+    /**
+     * 缩放时尽量让指针下的行情索引继续出现在指针位置。
+     * @param factor - 当前柱宽乘以的缩放系数。
+     * @param x - 锚点相对绘图区的横坐标。
+     */
     zoom(factor: number, x: number): void {
         const right = this.plotWidth - Math.max(0, Math.min(this.plotWidth, x))
         const position = this.offset + right / this.itemWidth

@@ -1,3 +1,5 @@
+/* TangramJS 原型类工厂的 ES5 入口。以成员对象装配构造器和原型，并保留父级初始化、实例复制与成员扩展的行为。 */
+
 (function (root, factory) {
     if (typeof module === 'object' && module.exports) module.exports = factory();
     else if (typeof define === 'function' && define.amd) define([], factory);
@@ -54,6 +56,7 @@
         };
     }
 
+    /** 按可选类名、父构造器和成员段组合原型。成员与静态扩展入口沿用旧工厂。 */
     function declare() {
         var args = Array.prototype.slice.call(arguments);
         var label = typeof args[0] === 'string' ? args.shift() : '';

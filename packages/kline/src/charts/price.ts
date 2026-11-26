@@ -1,3 +1,5 @@
+/* 构造价格主图及其叠加指标，主图价格与指标输出共用同一坐标区域。 */
+
 import { MAIndicator, SMAIndicator, EMAIndicator, BOLLIndicator } from '../indicators/index.js'
 import { Chart } from './Chart.js'
 

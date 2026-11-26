@@ -1,4 +1,7 @@
 /*! Adapted from TangramJS form/SimpleEditor/commands. */
+
+/* 集中登记编辑命令和值类型，具体插入操作负责构造和校验本命令使用的内容。 */
+
 import { defaultEmoticons } from './emoticons.js'
 import type { SimpleEditor } from './index.js'
 

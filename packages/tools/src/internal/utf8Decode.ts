@@ -1,5 +1,7 @@
 // TangramJS str/str.js:41
 
+/* 将 Base64 解出的字节字符串还原为旧编码约定下的 JS 字符串。 */
+
 export default function utf8Decode(utftext: string) {
     var string = "";
     var i = 0;

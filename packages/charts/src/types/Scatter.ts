@@ -1,4 +1,7 @@
 /*! Ported from TangramJS painter/Charts/types/Scatter.js. */
+
+/* 用双值坐标定位散点，点大小可由数值或回调决定，并参与指针命中。 */
+
 import type { ScatterSeries as ScatterOptions } from '../types.js'
 import { SeriesRenderer, type ResolvedSeries } from './Abstract.js'
 import { Point } from '../components/sharps/Point.js'

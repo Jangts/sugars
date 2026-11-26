@@ -1,3 +1,5 @@
+/* TangramJS 旧式 Promise 的 ES5 实现。保留同步通知及链式调用对原结算值的传递。 */
+
 (function (root, factory) {
     if (typeof module === 'object' && module.exports) module.exports = factory();
     else if (typeof define === 'function' && define.amd) define([], factory);
@@ -22,6 +24,7 @@
         function reject(reason) { settle(promise, 'rejected', reason); }
     }
 
+    /** 只有第一次结算生效。所有已排队的观察者都收到通知后，再抛出第一个回调异常。 */
     function settle(promise, status, value) {
         if (promise.PromiseStatus !== 'pending') return;
         promise.PromiseStatus = status;
@@ -39,6 +42,7 @@
         if (firstFailure) throw firstFailure.error;
     }
 
+    /** 已结算实例同步执行新订阅，保留旧式 Promise 的通知时序。 */
     function subscribe(promise, handler) {
         if (promise.PromiseStatus === 'pending') promise.handlers.push(handler);
         else handler();
@@ -51,7 +55,7 @@
                 var handler = promise.PromiseStatus === 'resolved' ? onResolved : onRejected;
                 try {
                     if (typeof handler === 'function') handler.call(promise, promise.PromiseValue);
-                    // TangramJS chains forward the original settled value.
+                    // 旧链式调用传递原结算值，回调的返回值不作为下游结果。
                     resolve(promise.PromiseValue);
                 } catch (error) {
                     reject(error);

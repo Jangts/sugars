@@ -1,3 +1,5 @@
+/* 定义振荡及趋势强弱类指标，用滚动窗口和递推表达式组合各条输出。 */
+
 import type { DataProvider } from '../DataProvider.js'
 import { HighExpression, LowExpression, NewExpression } from '../expressions/DataExpression.js'
 import { ConstExpression, Expression } from '../expressions/Expression.js'

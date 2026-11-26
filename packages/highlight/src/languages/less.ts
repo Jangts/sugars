@@ -1,18 +1,14 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `less` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 扩展 CSS 选择器和属性规则，加入 Less 的变量及混入调用。
  */
+
 import { highlighter as highlight } from '../core.js'
 
-/* FIXME :
- :extend() is not handled specifically : its highlighting is buggy.
- Mixin usage must be inside a ruleset to be highlighted.
- At-rules (e.g. import) containing interpolations are buggy.
- Detached rulesets are highlighted as at-rules.
- A comment before a mixin usage prevents the latter to be properly highlighted.
+/*
+ * 旧规则的边界包括 :extend()、带插值的 at 规则和脱离规则集的混入。
+ * 独立规则集会被识别为 at 规则，混入前的注释可能影响匹配。
  */
 
 highlight.languages.less = highlight.languages.extend('css', {
@@ -26,11 +22,11 @@ highlight.languages.less = highlight.languages.extend('css', {
             'punctuation': /[:()]/
         }
     },
-    // selectors and mixins are considered the same
+    // 选择器与混入共用这个匹配规则。
     'selector': {
         pattern: /(?:@\{[\w-]+\}|[^{};\s@])(?:@\{[\w-]+\}|\([^{}]*\)|[^{};@])*?(?=\s*\{)/,
         inside: {
-            // mixin parameters
+            // 混入参数。
             'variable': /@+[\w-]+/
         }
     },
@@ -40,7 +36,7 @@ highlight.languages.less = highlight.languages.extend('css', {
     'operator': /[+\-*\/]/
 });
 
-// Invert function and punctuation positions
+// 先匹配函数，再匹配标点。
 highlight.languages.insertBefore('less', 'punctuation', {
     'function': highlight.languages.less.
     function
@@ -48,7 +44,7 @@ highlight.languages.insertBefore('less', 'punctuation', {
 
 highlight.languages.insertBefore('less', 'property', {
     'variable': [
-        // Variable declaration (the colon must be consumed!)
+        // 变量声明须连同冒号一起消耗。
         {
             pattern: /@[\w-]+\s*:/,
             inside: {
@@ -56,9 +52,10 @@ highlight.languages.insertBefore('less', 'property', {
             }
         },
 
-        // Variable usage
+        // 变量引用。
         / @@ ? [\w - ] + /
     ],
+    // 混入调用的语法和选择器相似。先引入专用候选，再让 CSS 基础规则处理余下文本。
     'mixin-usage': {
         pattern: / ([{;]\s * )[.#]( ? !\d)[\w - ] + . * ?( ? =[(;]) /,
         lookbehind: true,

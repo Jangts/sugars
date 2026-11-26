@@ -1,13 +1,13 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `fortran` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 处理 Fortran 字符串、带类型写法的数字及语句关键字。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 highlight.languages.fortran = {
+    // 带引号的数字须先于通用字符串识别，以保留数值类别。
     'quoted-number': {
         pattern: /[BOZ](['"])[A-F0-9]+\1/i,
         alias: 'number'
@@ -25,18 +25,18 @@ highlight.languages.fortran = {
     'boolean': /\.(?:TRUE|FALSE)\.(?:_\w+)?/i,
     'number': /(?:\b|[+-])(?:\d+(?:\.\d*)?|\.\d+)(?:[ED][+-]?\d+)?(?:_\w+)?/i,
     'keyword': [
-        // Types
+        // 类型。
         /\b(?:INTEGER|REAL|DOUBLE ?PRECISION|COMPLEX|CHARACTER|LOGICAL)\b/i,
-        // END statements
+        // END 语句。
         /\b(?:END ?)?(?:BLOCK ?DATA|DO|FILE|FORALL|FUNCTION|IF|INTERFACE|MODULE(?! PROCEDURE)|PROGRAM|SELECT|SUBROUTINE|TYPE|WHERE)\b/i,
-        // Statements
+        // 语句。
         /\b(?:ALLOCATABLE|ALLOCATE|BACKSPACE|CALL|CASE|CLOSE|COMMON|CONTAINS|CONTINUE|CYCLE|DATA|DEALLOCATE|DIMENSION|DO|END|EQUIVALENCE|EXIT|EXTERNAL|FORMAT|GO ?TO|IMPLICIT(?: NONE)?|INQUIRE|INTENT|INTRINSIC|MODULE PROCEDURE|NAMELIST|NULLIFY|OPEN|OPTIONAL|PARAMETER|POINTER|PRINT|PRIVATE|PUBLIC|READ|RETURN|REWIND|SAVE|SELECT|STOP|TARGET|WHILE|WRITE)\b/i,
-        // Others
+        // 其余关键字。
         /\b(?:ASSIGNMENT|DEFAULT|ELEMENTAL|ELSE|ELSEWHERE|ELSEIF|ENTRY|IN|INCLUDE|INOUT|KIND|NULL|ONLY|OPERATOR|OUT|PURE|RECURSIVE|RESULT|SEQUENCE|STAT|THEN|USE)\b/i
     ],
     'operator': [
         /\*\*|\/\/|=>|[=\/]=|[<>]=?|::|[+\-*=%]|\.(?:EQ|NE|LT|LE|GT|GE|NOT|AND|OR|EQV|NEQV)\.|\.[A-Z]+\./i, {
-            // Use lookbehind to prevent confusion with (/ /)
+            // 使用后顾避免和数组构造的 (/ /) 混淆。
             pattern: /(^|(?!\().)\/(?!\))/,
             lookbehind: true
         }

@@ -1,4 +1,7 @@
 /*! Ported from TangramJS painter/Charts/modules/tooltip.js. */
+
+/* 汇总系列命中结果，把数据项或整条轴上的数据交给提示图层显示。 */
+
 import type { ChartElement } from '../components/Abstract.js'
 import type { Charts } from '../index.js'
 import { Tooltip } from '../components/Tooltip.js'
@@ -111,7 +114,7 @@ export function showTooltip(this: Charts, segments: any[], forceRedraw = false, 
             }
 
             this.draw();
-            // If we have multiple datasets, show a MultiTooltip for all of the data points at that index
+            // 共有多个系列时，将同一位置的命中项交给 MultiTooltip。
             if (segments.length > 0) {
                 if (showMulti) {
                     var tooltipLabels: string[] = [],
@@ -131,7 +134,7 @@ export function showTooltip(this: Charts, segments: any[], forceRedraw = false, 
                                 xPositions.push(element.x);
                                 yPositions.push(element.y);
 
-                                //Include any colour information about the element
+                                // 记录对应绘图元素的颜色，用于绘制图例。
                                 tooltipLabels.push(helpers.template(options.multiTooltipTemplate, element));
                                 tooltipColors.push({
                                     fill: element._saved.fillColor || element.fillColor,

@@ -1,10 +1,9 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `crystal` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 复用 Ruby 词法并补充 Crystal 的属性和宏展开。
  */
+
 import { highlighter as highlight } from '../core.js'
 import { cloneGrammar } from '../grammar.js'
 
@@ -17,6 +16,7 @@ highlight.languages.crystal = highlight.languages.extend('ruby', {
     number: /\b(?:0b[01_]*[01]|0o[0-7_]*[0-7]|0x[0-9a-fA-F_]*[0-9a-fA-F]|(?:[0-9](?:[0-9_]*[0-9])?)(?:\.[0-9_]*[0-9])?(?:[eE][+-]?[0-9_]*[0-9])?)(?:_(?:[uif](?:8|16|32|64))?)?\b/,
 });
 
+// 复制现有 Crystal 词法给宏片段使用，使新插入的宏规则不会反过来进入该副本。
 var rest = cloneGrammar(highlight.languages.crystal);
 
 highlight.languages.insertBefore('crystal', 'string', {

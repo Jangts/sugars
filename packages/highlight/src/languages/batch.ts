@@ -1,10 +1,9 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `batch` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 识别批处理的标签、命令、参数变量与注释。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 var variable = /%%?[~:\w]+%?|!\S+!/;
@@ -30,8 +29,9 @@ highlight.languages.batch = {
         pattern: /^:.*/m,
         alias: 'property'
     },
+    // 同一组命令分支按命令位置识别参数关键字，避免把参数文本中的普通单词一律当作命令。
     'command': [{
-            // FOR command
+            // FOR 循环。
             pattern: /((?:^|[&(])[ \t]*)for(?: ?\/[a-z?](?:[ :](?:"[^"]*"|\S+))?)* \S+ in \([^)]+\) do/im,
             lookbehind: true,
             inside: {
@@ -44,7 +44,7 @@ highlight.languages.batch = {
             }
         },
         {
-            // IF command
+            // IF 条件。
             pattern: /((?:^|[&(])[ \t]*)if(?: ?\/[a-z?](?:[ :](?:"[^"]*"|\S+))?)* (?:not )?(?:cmdextversion \d+|defined \w+|errorlevel \d+|exist \S+|(?:"[^"]*"|\S+)?(?:==| (?:equ|neq|lss|leq|gtr|geq) )(?:"[^"]*"|\S+))/im,
             lookbehind: true,
             inside: {
@@ -57,7 +57,7 @@ highlight.languages.batch = {
             }
         },
         {
-            // ELSE command
+            // ELSE 分支。
             pattern: /((?:^|[&()])[ \t]*)else\b/im,
             lookbehind: true,
             inside: {
@@ -65,7 +65,7 @@ highlight.languages.batch = {
             }
         },
         {
-            // SET command
+            // SET 赋值。
             pattern: /((?:^|[&(])[ \t]*)set(?: ?\/[a-z](?:[ :](?:"[^"]*"|\S+))?)* (?:[^^&)\r\n]|\^(?:\r\n|[\s\S]))*/im,
             lookbehind: true,
             inside: {
@@ -82,7 +82,7 @@ highlight.languages.batch = {
             }
         },
         {
-            // Other commands
+            // 其余命令。
             pattern: /((?:^|[&(])[ \t]*@?)\w+\b(?:[^^&)\r\n]|\^(?:\r\n|[\s\S]))*/im,
             lookbehind: true,
             inside: {

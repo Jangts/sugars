@@ -1,6 +1,8 @@
+/* 封装系列装配共用的遍历、数值范围和配置合并，保留 TangramJS 的回调参数顺序和数组覆盖方式。 */
+
 import { cloneDeep, mergeWith } from 'lodash-es'
 
-// Tangram's callbacks received the index or key first and an optional receiver.
+// TangramJS 的回调以索引或键为第一参数，接收者可由调用方传入。
 export function eachEntry<T>(
   source: ArrayLike<unknown> | object | null | undefined,
   visit: (this: T, key: any, value: any) => unknown,

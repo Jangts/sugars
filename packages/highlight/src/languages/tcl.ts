@@ -1,10 +1,9 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `tcl` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 区分 Tcl 命令、变量、作用域声明和字符串。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 highlight.languages.tcl = {
@@ -36,6 +35,7 @@ highlight.languages.tcl = {
         },
         /\b(elseif|else)\b/
     ],
+    // 作用域相关命令有单独标记，便于主题和普通命令名区别显示。
     'scope': {
         pattern: /(^\s*)(global|upvar|variable)\b/m,
         lookbehind: true,

@@ -1,10 +1,9 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `qore` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 识别 Qore 变量、语言关键字、函数和字面量。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 highlight.languages.qore = highlight.languages.extend('clike', {
@@ -12,7 +11,8 @@ highlight.languages.qore = highlight.languages.extend('clike', {
         pattern: /(^|[^\\])(?:\/\*[\w\W]*?\*\/|(?:\/\/|#).*)/,
         lookbehind: true
     },
-    // Overridden to allow unescaped multi-line strings
+    // 允许字符串跨行而无需转义换行。
+    // 扩展的字符串规则允许实际换行，沿用克隆出的基础关键字和运算符。
     'string': /("|')(\\(?:\r\n|[\s\S])|(?!\1)[^\\])*\1/,
     'variable': /\$(?!\d)\w+\b/,
     'keyword': /\b(?:abstract|any|assert|binary|bool|boolean|break|byte|case|catch|char|class|code|const|continue|data|default|do|double|else|enum|extends|final|finally|float|for|goto|hash|if|implements|import|inherits|instanceof|int|interface|long|my|native|new|nothing|null|object|our|own|private|reference|rethrow|return|short|soft(?:int|float|number|bool|string|date|list)|static|strictfp|string|sub|super|switch|synchronized|this|throw|throws|transient|try|void|volatile|while)\b/,

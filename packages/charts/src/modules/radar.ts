@@ -1,4 +1,7 @@
 /*! Ported from TangramJS painter/Charts/modules/radar.js. */
+
+/* 根据指标定义建立雷达轴和网格，供雷达系列使用各指标的值域。 */
+
 import type { ChartElement } from '../components/Abstract.js'
 import type { Charts } from '../index.js'
 import { Polar } from '../components/scales/Polar.js'

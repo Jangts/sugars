@@ -1,10 +1,9 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `glsl` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 在 C 风格词法之上补充着色器类型、内置变量和预处理指令。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 highlight.languages.glsl = highlight.languages.extend('clike', {
@@ -17,6 +16,7 @@ highlight.languages.glsl = highlight.languages.extend('clike', {
 });
 
 highlight.languages.insertBefore('glsl', 'comment', {
+    // 沿用 C 风格基础词法，同时保留 GLSL 的预处理标记及着色器专用关键字。
     'preprocessor': {
         pattern: /(^[ \t]*)#(?:(?:define|undef|if|ifdef|ifndef|else|elif|endif|error|pragma|extension|version|line)\b)?/m,
         lookbehind: true,

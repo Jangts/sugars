@@ -1,10 +1,9 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `rest` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 识别 reStructuredText 的指令、替换定义、表格和内联标记。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 highlight.languages.rest = {
@@ -24,7 +23,7 @@ highlight.languages.rest = {
         }
     ],
 
-    // Directive-like patterns
+    // 类指令的标记。
     'substitution-def': {
         pattern: /(^\s*\.\. )\|(?:[^|\s](?:[^|]*[^|\s])?)\| [^:]+::/m,
         lookbehind: true,
@@ -63,6 +62,7 @@ highlight.languages.rest = {
             }
         }
     ],
+    // 类指令和替换标记须先于普通注释匹配。它们都可能借用相近的显式标记前缀。
     'directive': {
         pattern: /(^\s*\.\. )[^:]+::/m,
         lookbehind: true,
@@ -72,13 +72,13 @@ highlight.languages.rest = {
         }
     },
     'comment': {
-        // The two alternatives try to prevent highlighting of blank comments
+        // 两个分支均用于排除空白注释。
         pattern: /(^\s*\.\.)(?:(?: .+)?(?:(?:\r?\n|\r).+)+| .+)(?=(?:\r?\n|\r){2}|$)/m,
         lookbehind: true
     },
 
     'title': [
-        // Overlined and underlined
+        // 上下都带修饰线的标题。
         {
             pattern: /^(([!"#$%&'()*+,\-.\/:;<=>?@\[\\\]^_`{|}~])\2+)(?:\r?\n|\r).+(?:\r?\n|\r)\1$/m,
             inside: {
@@ -87,7 +87,7 @@ highlight.languages.rest = {
             }
         },
 
-        // Underlined only
+        // 仅有下方修饰线的标题。
         {
             pattern: /(^|(?:\r?\n|\r){2}).+(?:\r?\n|\r)([!"#$%&'()*+,\-.\/:;<=>?@\[\\\]^_`{|}~])\2+(?=\r?\n|\r|$)/,
             lookbehind: true,
@@ -197,10 +197,7 @@ highlight.languages.rest = {
         }
     ],
 
-    // Line block start,
-    // quote attribution,
-    // explicit markup start,
-    // and anonymous hyperlink target shortcut (__)
+    // 匹配行块开头、引文署名、显式标记开头和匿名链接入口 __。
     'punctuation': {
         pattern: /(^\s*)(?:\|(?= |$)|(?:---?|—|\.\.|__)(?= )|\.\.$)/m,
         lookbehind: true

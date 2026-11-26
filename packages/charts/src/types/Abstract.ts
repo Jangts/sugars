@@ -1,4 +1,7 @@
 /*! Ported from TangramJS painter/Charts/types/Abstract.js. */
+
+/* 系列渲染基类持有所属图表、图层上下文和绘制元素，具体系列实现数据更新和命中。 */
+
 import type { Charts } from '../index.js'
 import type { ChartElement } from '../components/Abstract.js'
 import type { Paint } from '../types.js'

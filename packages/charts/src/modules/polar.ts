@@ -1,4 +1,7 @@
 /*! Ported from TangramJS painter/Charts/modules/polar.js. */
+
+/* 从极坐标选项和系列数据装配角轴及径向轴，归集各数据点的命中结果。 */
+
 import type { ChartElement } from '../components/Abstract.js'
 import type { Charts } from '../index.js'
 import { Polar } from '../components/scales/Polar.js'

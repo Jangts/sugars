@@ -1,22 +1,20 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `bison` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 在 C 词法基础上识别 Bison 的声明区和产生式，把语义动作交给 C 规则。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 highlight.languages.bison = highlight.languages.extend('c', {});
+// 规则区里的花括号代码要按 C 处理。提前识别 Bison 区块，避免继承来的 C 注释先切开其边界。
 highlight.languages.insertBefore('bison', 'comment', {
     'bison': {
-        // This should match all the beginning of the file
-        // including the prologue(s), the bison declarations and
-        // the grammar rules.
+        // 从文件起始覆盖序言、Bison 声明和语法规则。
         pattern: /^[\s\S]*?%%[\s\S]*?%%/,
         inside: {
             'c': {
-                // Allow for one level of nested braces
+                // 允许一层嵌套花括号。
                 pattern: /%\{[\s\S]*?%\}|\{(?:\{[^}]*\}|[^{}])*\}/,
                 inside: {
                     'delimiter': {

@@ -1,3 +1,5 @@
+/* 管理图表 Canvas 的可视尺寸、像素比和画布更新，绘制仍使用逻辑像素。 */
+
 import type { KLine } from './index.js'
 import { Painter } from './painter/Painter.js'
 import type { Size } from './types.js'

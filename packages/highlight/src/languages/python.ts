@@ -1,13 +1,13 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `python` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 优先识别三引号字符串，再区分注释、定义名和表达式标记。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 highlight.languages.python = {
+    // 三引号候选先于普通字符串，避免它的起始定界符被拆成空字符串。
     'triple-quoted-string': {
         pattern: /"""[\s\S]+?"""|'''[\s\S]+?'''/,
         alias: 'string'

@@ -1,10 +1,9 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `roboconf` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 区分 Roboconf 部署描述中的组件、属性、可选项与通配符。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 highlight.languages.roboconf = {
@@ -23,6 +22,7 @@ highlight.languages.roboconf = {
         lookbehind: true,
         alias: 'attr-value'
     },
+    // 可选项和通配符分别着色，让部署描述中的可选依赖与通配选择保持可辨。
     'optional': {
         pattern: /\(optional\)/,
         alias: 'builtin'

@@ -1,10 +1,9 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `markdown` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 在标记词法基础上识别标题、代码、链接和强调，嵌套强调使用可递归规则。
  */
+
 import { highlighter as highlight } from '../core.js'
 import { cloneGrammar, insideGrammar } from '../grammar.js'
 
@@ -15,8 +14,9 @@ highlight.languages.insertBefore('markdown', 'prolog', {
         pattern: /^>(?:[\t ]*>)*/m,
         alias: 'punctuation'
     },
+    // 代码区域应先从普通正文中切出，避免强调符号和链接写法在代码内被误识别。
     'code': [{
-            // Prefixed by 4 spaces or 1 tab
+            // 以四个空格或一个制表符缩进。
             pattern: /^(?: {4}|\t).+/m,
             alias: 'keyword'
         },
@@ -28,9 +28,9 @@ highlight.languages.insertBefore('markdown', 'prolog', {
         }
     ],
     'title': [{
-            // title 1
+            // 一级标题。
             // =======
-            // title 2
+            // 二级标题。
             // -------
             pattern: /\w+.*(?:\r?\n|\r)(?:==+|--+)/,
             alias: 'important',
@@ -86,7 +86,7 @@ highlight.languages.insertBefore('markdown', 'prolog', {
     'bold': {
         // **strong**
         // __strong__
-        // Allow only one line break
+        // 最多允许一个换行。
         pattern: /(^|[^\\])(\*\*|__)(?:(?:\r?\n|\r)(?!\r?\n|\r)|.)+?\2/,
         lookbehind: true,
         inside: {
@@ -96,7 +96,7 @@ highlight.languages.insertBefore('markdown', 'prolog', {
     'italic': {
         // *em*
         // _em_
-        // Allow only one line break
+        // 最多允许一个换行。
         pattern: /(^|[^\\])([*_])(?:(?:\r?\n|\r)(?!\r?\n|\r)|.)+?\2/,
         lookbehind: true,
         inside: {

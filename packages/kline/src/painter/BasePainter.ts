@@ -1,3 +1,5 @@
+/* 保存原生画布上下文和通用绘图属性，为路径与文字绘制提供共同基础。 */
+
 import type { Canvas } from '../Canvas.js'
 import { TextPainter } from './TextPainter.js'
 
@@ -46,7 +48,7 @@ export class BasePainter extends TextPainter {
         return this
     }
 
-    /** Clear the canvas or a rectangle specified by its size, center, or top-left corner. */
+    /** 清空画布，或按尺寸、中心点、左上角指定要清空的矩形。 */
     clear(...args: (number | string | undefined)[]): this {
         const integer = (value: number | string | undefined) => Number.parseInt(String(value))
         const [first, second, third, fourth] = args
@@ -89,12 +91,12 @@ export class BasePainter extends TextPainter {
         y = clampY(this.canvas, y)
 
         if (typeof smooth === 'string') {
-            // Accept the legacy shorthand .to(x, y, method).
+            // 保留 .to(x, y, method) 的旧参数写法。
             method = smooth
             smooth = false
         }
         else if (typeof smooth === 'object' && smooth instanceof Array) {
-            // Bézier control points always extend the current path.
+            // 给出 Bézier 控制点时始终扩展当前路径。
             method = method === 'stroke' ? 'stroke' : 'line'
         }
 
@@ -102,7 +104,7 @@ export class BasePainter extends TextPainter {
             case 'stroke':
             case 'line':
                 if (smooth && smooth instanceof Array) {
-                    // The array length determines how many control points are present.
+                    // 由数组长度判断控制点数量。
                     if (smooth.length > 3) {
                         this.ctx.bezierCurveTo(smooth[0]!, smooth[1]!, smooth[2]!, smooth[3]!, x, y)
                     } else if (smooth.length > 1) {
@@ -126,7 +128,7 @@ export class BasePainter extends TextPainter {
         x2 = clampX(this.canvas, x2)
         y2 = clampY(this.canvas, y2)
 
-        // A third-position boolean after the endpoints is the legacy stroke shorthand.
+        // 端点之后的第三个实参为布尔值时，沿用旧接口的描边选项。
         if (smooth === true) {
             if (typeof stroke === 'function') beforeClose = stroke
             smooth = false
@@ -190,7 +192,7 @@ export class BasePainter extends TextPainter {
             this.arc(x, y, radiusX, startAngle + rotation, endAngle + rotation, counterclockwise)
         }
         else {
-            // Sample the fallback curve about once per pixel along the longer radius.
+            // 沿较大的半径按约每像素一次取样，供缺少原生方法时近似绘制。
             const step = 1 / Math.max(radiusX, radiusY)
 
             const dAngle = endAngle - startAngle

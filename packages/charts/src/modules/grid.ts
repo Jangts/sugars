@@ -1,4 +1,7 @@
 /*! Ported from TangramJS painter/Charts/modules/grid.js. */
+
+/* 从笛卡尔系列和轴配置装配网格比例尺，并将鼠标位置转换成对应的数据项或轴提示。 */
+
 import type { ChartElement } from '../components/Abstract.js'
 import type { Charts } from '../index.js'
 import { Grid } from '../components/scales/Grid.js'

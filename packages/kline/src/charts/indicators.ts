@@ -1,3 +1,5 @@
+/* 把指标及其输出装配为独立区域中的线或柱，数据仍由表达式系统求值。 */
+
 import { MACDIndicator, KDJIndicator, RSIIndicator, WRIndicator } from '../indicators/index.js'
 import { Chart } from './Chart.js'
 

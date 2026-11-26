@@ -1,15 +1,13 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `asciidoc` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 识别 AsciiDoc 的块结构、属性和列表标记，并在相应内容中应用嵌套规则。
  */
+
 import { highlighter as highlight } from '../core.js'
 import { insideGrammar } from '../grammar.js'
 
-// We don't allow for pipes inside parentheses
-// to not break table pattern |(. foo |). bar |
+// 括号中排除竖线，以免吞掉表格分隔符，例如 |(. foo |). bar |。
 var attributes = {
     pattern: /(^[ \t]*)\[(?!\[)(?:(["'$`])(?:(?!\2)[^\\]|\\.)*\2|\[(?:[^\]\\]|\\.)*\]|[^\]\\]|\\.)*\]/m,
     lookbehind: true,
@@ -24,14 +22,14 @@ var attributes = {
             pattern: /'(?:[^'\\]|\\.)*'/,
             inside: {
                 'punctuation': /^'|'$/
-                    // See rest below
+                    // 嵌套规则在下方补入。
             }
         },
         'string': /"(?:[^"\\]|\\.)*"/,
         'variable': /\w+(?==)/,
         'punctuation': /^\[|\]$|,/,
         'operator': /=/,
-        // The negative look-ahead prevents blank matches
+        // 否定前瞻排除空白匹配。
         'attr-value': /(?!^\s+$).+/
     }
 };
@@ -40,6 +38,7 @@ highlight.languages.asciidoc = {
         pattern: /^(\/{4,})(?:\r?\n|\r)(?:.*(?:\r?\n|\r))*?\1/m,
         alias: 'comment'
     },
+    // 表格要先确定单元格的分隔位置，再把各单元格交给正文规则。属性里的竖线可能影响这一边界。
     'table': {
         pattern: /^\|={3,}(?:(?:\r?\n|\r).*)*?(?:\r?\n|\r)\|={3,}$/m,
         inside: {
@@ -51,7 +50,7 @@ highlight.languages.asciidoc = {
                 pattern: /(^|[^\\])[|!]=*/,
                 lookbehind: true
             }
-            // See rest below
+            // 嵌套规则在下方补入。
         }
     },
 
@@ -59,27 +58,27 @@ highlight.languages.asciidoc = {
         pattern: /^(\+{4,})(?:\r?\n|\r)(?:.*(?:\r?\n|\r))*?\1$/m,
         inside: {
             'punctuation': /^\++|\++$/
-                // See rest below
+                // 嵌套规则在下方补入。
         }
     },
-    // Literal blocks and listing blocks
+    // 文字块和列表式代码块。
     'literal-block': {
         pattern: /^(-{4,}|\.{4,})(?:\r?\n|\r)(?:.*(?:\r?\n|\r))*?\1$/m,
         inside: {
             'punctuation': /^(?:-+|\.+)|(?:-+|\.+)$/
-                // See rest below
+                // 嵌套规则在下方补入。
         }
     },
-    // Sidebar blocks, quote blocks, example blocks and open blocks
+    // 边栏、引用、示例和开放块。
     'other-block': {
         pattern: /^(--|\*{4,}|_{4,}|={4,})(?:\r?\n|\r)(?:.*(?:\r?\n|\r))*?\1$/m,
         inside: {
             'punctuation': /^(?:-+|\*+|_+|=+)|(?:-+|\*+|_+|=+)$/
-                // See rest below
+                // 嵌套规则在下方补入。
         }
     },
 
-    // list-punctuation and list-label must appear before indented-block
+    // 列表标记和标签必须在缩进块之前匹配。
     'list-punctuation': {
         pattern: /(^[ \t]*)(?:-|\*{1,5}|\.{1,5}|(?:[a-z]|\d+)\.|[xvi]+\))(?= )/im,
         lookbehind: true,
@@ -101,7 +100,7 @@ highlight.languages.asciidoc = {
         alias: 'important',
         inside: {
             'punctuation': /^(?:\.|=+)|(?:=+|-+|~+|\^+|\++)$/
-                // See rest below
+                // 嵌套规则在下方补入。
         }
     },
     'attribute-entry': {
@@ -206,7 +205,7 @@ highlight.languages.asciidoc = {
 };
 
 
-// Allow some nesting. There is no recursion though, so cloning should not be needed.
+// 支持有限嵌套，规则关系无递归，可直接复用。
 
 insideGrammar(attributes.inside['interpreted']).rest = {
     'macro': highlight.languages.asciidoc['macro'],
@@ -271,7 +270,7 @@ insideGrammar(highlight.languages.asciidoc!['title']).rest = {
     'entity': highlight.languages.asciidoc['entity']
 };
 
-// Plugin to make entity title show the real entity, idea by Roman Komarov
+// 实体提示展示解码后的字符，做法来自 Roman Komarov。
 highlight.hooks.add('wrap', function(env) {
     if (env.type === 'entity') {
         env.attributes['title'] = env.content.replace(/&amp;/, '&');

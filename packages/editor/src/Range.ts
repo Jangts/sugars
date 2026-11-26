@@ -1,6 +1,9 @@
 /*! Ported from TangramJS form/SimpleEditor/Range.js. */
 
-/** The editor's original range operations, backed by the owner's native Range. */
+/** 旧编辑器的范围操作由所属文档的原生 Range 承担。 */
+
+/* 在文档原生 Range 上封装编辑命令和节点插入，操作的范围由所属编辑区的 Selection 管理。 */
+
 export class EditorRange {
     constructor(readonly originRange: Range, private readonly document: Document) {}
 
@@ -53,7 +56,7 @@ export class EditorRange {
     }
 
     insertHTML(html: string): boolean {
-        // Use the native command to retain the browser undo buffer.
+        // 用原生命令插入可保留浏览器的撤销历史。
         if (this.execCommand('insertHTML', html)) return true
         const fragment = this.originRange.createContextualFragment(html)
         if (!fragment.lastChild) return false

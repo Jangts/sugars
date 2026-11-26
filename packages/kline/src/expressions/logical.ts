@@ -1,3 +1,5 @@
+/* 以表达式节点实现比较和条件选取，运算和取样都沿用当前行情索引。 */
+
 import { OperationExpression } from './OperationExpression.js'
 import type { BinaryOperands } from './OperationExpression.js'
 

@@ -1,3 +1,5 @@
+/* 解析受支持的类 SQL 语句，并把筛选、排序、分页和投影应用到本地记录。 */
+
 export type Row = Record<string, unknown>
 type Value = (row: Row) => unknown
 type Filter = (row: Row) => boolean
@@ -57,7 +59,7 @@ function compare(op: string, left: unknown, right: unknown): boolean {
     }
 }
 
-// Replaces eval and with in TangramJS src/data/data.js and src/data/Sheet.js.
+// 以受限解析器替代 TangramJS src/data/data.js 和 src/data/Sheet.js 中的动态求值。
 class Parser {
     #position = 0
 
@@ -167,6 +169,7 @@ class Parser {
         return value
     }
 
+    /** 删除和更新使用必需的 WHERE。查询可以从整张表开始筛选。 */
     selection(requireWhere = false): Selection {
         const where = this.accept('where')
         if (requireWhere && !where) throw new SyntaxError('Expected where')
@@ -218,6 +221,7 @@ class Parser {
     }
 }
 
+/** 检查完整的受支持语句，生成只包含字面量和访问器的内部表示。 */
 export function parse(sql: string): Statement {
     const parser = new Parser(tokens(sql))
     const statement = parser.statement()

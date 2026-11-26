@@ -1,10 +1,9 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `smarty` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 在标记高亮阶段暂存 Smarty 标签，再把已分词的模板内容放回原位置。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 var smarty_pattern = /\{\*[\w\W]+?\*\}|\{[\w\W]+?\}/g;
@@ -41,7 +40,7 @@ highlight.languages.smarty = highlight.languages.extend('markup', {
                 /(?!\d)\w+(?=\()/
             ],
             'attr-name': {
-                // Value is made optional because it may have already been tokenized
+                // 值为可选匹配，它可能已被分词。
                 pattern: /\w+\s*=\s*(?:(?!\d)\w+)?/,
                 inside: {
                     "variable": {
@@ -64,8 +63,7 @@ highlight.languages.smarty = highlight.languages.extend('markup', {
     }
 });
 
-// Comments are inserted at top so that they can
-// surround markup
+// 优先匹配注释，让注释可以包住标记文本。
 highlight.languages.insertBefore('smarty', 'tag', {
     'smarty-comment': {
         pattern: /\{\*[\w\W]*?\*\}/,
@@ -73,19 +71,20 @@ highlight.languages.insertBefore('smarty', 'tag', {
     }
 });
 
-// Tokenize all inline Smarty expressions
+// 暂存要在标记之外单独分词的 Smarty 表达式。
 highlight.hooks.add('before-highlight', function(env) {
     if (env.language !== 'smarty') {
         return;
     }
 
     var smarty_litteral_mode = false;
+    // 外围标记阶段只保留模板位置，Smarty 片段之后单独高亮。literal 块中的疑似标签应保留原样。
     const tokenStack: string[] = env.tokenStack = [];
 
     env.backupCode = env.code;
     env.code = env.code.replace(smarty_pattern, function(match) {
 
-        // Smarty tags inside {literal} block are ignored
+        // literal 块内的 Smarty 标签保持原文。
         if (match === smarty_litteral_end) {
             smarty_litteral_mode = false;
         }
@@ -102,7 +101,7 @@ highlight.hooks.add('before-highlight', function(env) {
     });
 });
 
-// Restore env.code for other plugins (e.g. line-numbers)
+// 恢复原始 env.code，供行号等其他插件使用。
 highlight.hooks.add('before-insert', function(env) {
     if (env.language === 'smarty') {
         env.code = env.backupCode ?? env.code;
@@ -110,15 +109,14 @@ highlight.hooks.add('before-insert', function(env) {
     }
 });
 
-// Re-insert the tokens after highlighting
-// and highlight them with defined grammar
+// 外围高亮完成后，将模板片段按对应词法插回。
 highlight.hooks.add('after-highlight', function(env) {
     if (env.language !== 'smarty') {
         return;
     }
 
     for (const [i, t] of (env.tokenStack ?? []).entries()) {
-        // The replace prevents $$, $&, $`, $', $n, $nn from being interpreted as special patterns
+        // 通过替换回调插入内容，避免其中的 $ 组合被解释为替换模板。
         env.highlightedCode = env.highlightedCode.replace('___SMARTY' + (i + 1) + '___', highlight.highlight(t, env.grammar, 'smarty').replace(/\$/g, '$$$$'));
     }
 

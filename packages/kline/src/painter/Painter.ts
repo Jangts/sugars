@@ -1,3 +1,5 @@
+/* 封装图表常用的路径、线段与形状绘制，输入使用逻辑像素坐标。 */
+
 import { BasePainter } from './BasePainter.js'
 
 function lineLength(x: number, y: number): number {

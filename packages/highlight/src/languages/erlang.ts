@@ -1,15 +1,15 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `erlang` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 区分 Erlang 的原子、变量、函数、带引号名称和数字。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 highlight.languages.erlang = {
     'comment': /%.+/,
     'string': /"(?:\\?.)*?"/,
+    // 有引号的名称通过后续调用位置区分函数和普通原子，所以函数候选优先于普通带引号原子。
     'quoted-function': {
         pattern: /'(?:\\.|[^'\\])+'(?=\()/,
         alias: 'function'
@@ -27,17 +27,17 @@ highlight.languages.erlang = {
     ],
     'function': /\b[a-z][\w@]*(?=\()/,
     'variable': {
-        // Look-behind is used to prevent wrong highlighting of atoms containing "@"
+        // 用后顾避免误匹配包含 @ 的原子。
         pattern: /(^|[^@])(?:\b|\?)[A-Z_][\w@]*/,
         lookbehind: true
     },
     'operator': [
         /[=\/<>:]=|=[:\/]=|\+\+?|--?|[=*\/!]|\b(?:bnot|div|rem|band|bor|bxor|bsl|bsr|not|and|or|xor|orelse|andalso)\b/, {
-            // We don't want to match <<
+            // 跳过 << 运算符。
             pattern: /(^|[^<])<(?!<)/,
             lookbehind: true
         }, {
-            // We don't want to match >>
+            // 跳过 >> 运算符。
             pattern: /(^|[^>])>(?!>)/,
             lookbehind: true
         }

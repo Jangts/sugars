@@ -1,3 +1,5 @@
+/* 绘制跟随交互的覆盖层，如十字光标和当前数据提示。 */
+
 import { timeAxisHeight } from '../Layout.js'
 import { Brush } from './Brush.js'
 import { formatTime, formatValue } from './grids.js'

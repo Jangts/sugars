@@ -1,3 +1,10 @@
+/**
+ * `@sugars/swiper` 的公开入口。
+ *
+ * 轮播实例管理逻辑索引、计时和输入事件，布局及切换交给预设，并在销毁时恢复已有节点。
+ * `Swiper` 管理播放状态和输入，布局与过渡由 `Swiper.presets` 中的预设承接。
+ */
+
 import { ViewModel } from '@sugars/simple-mvvm/view-model'
 import type { ViewModelState } from '@sugars/simple-mvvm/view-model'
 import { presets } from './presets.js'
@@ -6,38 +13,71 @@ import type { PresetName } from './presets.js'
 export type { PresetName } from './presets.js'
 
 export interface SwiperOptions {
+    /** 用于选择已登记布局的名称，未知名称回退到 slide。 */
     preset?: PresetName | string
+    /** 供自定义布局和回调读取的调用方数据。 */
     data?: unknown
+    /** 正向播放时的起始逻辑索引，默认 0。反向播放从最后一项开始。 */
     curr?: number
+    /** 自动切换间隔，单位为毫秒，默认 5000。 */
     speed?: number
+    /** 单次切换及 after 回调的等待时长，单位为毫秒，默认 600。 */
     duration?: number
+    /** CSS easing 或能够映射到 CSS 的旧缓动名，默认 linear。 */
     easing?: string
+    /** 布局的视觉移动方向，按预设坐标轴缺省为 left 或 top。 */
     direction?: 'left' | 'right' | 'top' | 'bottom'
+    /** 自动播放是否往更大的逻辑索引推进。 */
     positive?: boolean
+    /** 是否自动安排下一次切换，默认开启。 */
     autoplay?: boolean
+    /** 是否在末端回绕，默认开启。 */
     loop?: boolean
+    /** 指针停留时是否暂停自动播放，默认开启。 */
     pauseOnHover?: boolean
+    /** 锚点切换后是否暂停自动播放。 */
     pauseOnAction?: boolean
+    /** 启用键盘方向键控制。 */
     kbCtrlAble?: boolean
+    /** 启用指针拖动切换，默认开启。 */
     touch?: boolean
+    /** 触发锚点切换的行为。 */
     switchActionType?: 'click' | 'hover'
+    /** 加到 stage 节点的 CSS 类名。 */
     stageTheme?: string | readonly string[]
+    /** 加到 panel 节点的 CSS 类名，缺省沿用 stageTheme。 */
     panelTheme?: string | readonly string[]
+    /** 由实例为现有锚点分配逻辑索引。 */
     renderPanel?: boolean
+    /** 调用方已插入无缝播放的边界副本，由预设计数而无需再次复制。 */
     preparedActors?: boolean
+    /** 布局和事件就绪后、首次切换前调用，接收初始索引。 */
     start?(this: Swiper, index: number): void
+    /** 执行 cut 前同步调用，接收目标索引。 */
     before?(this: Swiper, index: number): void
+    /** 等待配置的切换时长后调用，接收目标索引。 */
     after?(this: Swiper, index: number): void
+    /** 反馈自动播放间隔的进度，单位为百分比。 */
     onprogress?(this: Swiper, percent: number): void
 }
 
+/** 定义轨道布局及一次切换。切换可同时取得归一化后的目标、上个索引和未经归一化的请求位置。 */
 export interface SwiperPreset extends SwiperOptions {
     name?: string
     axis?: 'horizontal' | 'vertical'
+    /** 无缝预设使用的边界副本总数。 */
     clones?: number
     counter?(this: Swiper, count: number): number
+    /** 旧拼写的结构准备钩子，在读取 troupe 元素前调用。 */
     bluider?(this: Swiper): void
+    /** 根据预设组织轨道和原始项的样式。 */
     layout(this: Swiper): void
+    /**
+     * 用原始请求值判断是否跨越首尾边界。
+     * @param target - 已归一化的目标逻辑索引。
+     * @param from - 前一项的逻辑索引。
+     * @param requested - 尚未归一化的请求索引。
+     */
     cut(this: Swiper, target: number, from: number, requested: number): void
 }
 
@@ -90,6 +130,12 @@ export class Swiper {
     #clones: HTMLElement[] = []
     #snapshots: Snapshot[] = []
 
+    /**
+     * @param element - 含 .troupe 和 .actor 的容器或元素 ID。
+     * @param preset - 预设名、包含预设字段的选项或自定义布局。
+     * @param options - 覆盖预设与前一参数的配置。
+     * @throws {TypeError} 缺少容器或 .troupe。
+     */
     constructor(element: HTMLElement | string, preset?: string | SwiperOptions | SwiperPreset, options: SwiperOptions = {}) {
         const root = typeof element === 'string' ? document.getElementById(element) : element
         if (!root) throw new TypeError('Swiper needs a root element')
@@ -123,6 +169,7 @@ export class Swiper {
         this.#applyTheme(this.stages, settings.stageTheme)
         this.#applyTheme(this.panel, settings.panelTheme ?? settings.stageTheme)
         const clones = this.#preset.clones ?? 0
+        // 逻辑索引排除边界副本。副本只为视觉切换服务，锚点和回调继续使用原始图片的编号。
         const count = settings.preparedActors ? original.length - clones : original.length
         this.actorsNum = Math.max(0, this.#preset.counter?.call(this, original.length) ?? count)
         this.actors = clones && !settings.preparedActors && original.length
@@ -178,6 +225,7 @@ export class Swiper {
         return [first, ...actors, ...tail]
     }
 
+    /** 索引始终指向原始项，首尾用于衔接的副本由预设管理。 */
     #normalize(index: number): number {
         return this.actorsNum && Number.isFinite(index)
             ? (Math.trunc(index) % this.actorsNum + this.actorsNum) % this.actorsNum : 0
@@ -193,6 +241,12 @@ export class Swiper {
         })
     }
 
+    /**
+     * 切换到指定项并重新安排自动播放，由预设执行具体的空间或透明度变化。
+     *
+     * @param index - 目标逻辑索引，无缝预设可接收越出首尾的请求。
+     * @returns 完成本次切换调度的实例。
+     */
     play(index = this.curr): this {
         if (!this.actorsNum || !Number.isFinite(index) || this.#events.signal.aborted) return this
         this.stop()
@@ -219,6 +273,7 @@ export class Swiper {
         return this.play(this.curr - 1)
     }
 
+    /** 自动播放由一个定时器推进，手动切换会重新计算下一次触发时间。 */
     #schedule(): void {
         if (!this.autoplay || this.#hover || this.actorsNum < 2 || this.#events.signal.aborted) return
         const win = this.Element.ownerDocument.defaultView!
@@ -243,6 +298,10 @@ export class Swiper {
         return this
     }
 
+    /**
+     * @param pause - true 暂停自动播放，false 重新启动调度。
+     * @returns 当前实例。
+     */
     pause(pause = true): this {
         this.stop()
         this.autoplay = !pause
@@ -291,6 +350,7 @@ export class Swiper {
         }, { signal })
     }
 
+    /** 解除计时和监听，移除内部副本并还原原始节点的类名与样式。 */
     destroy(): void {
         if (this.#events.signal.aborted) return
         this.#events.abort()

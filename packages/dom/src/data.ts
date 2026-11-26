@@ -1,4 +1,7 @@
 // TangramJS src/dom/Elements.js, data. Keep plugin state off DOM attributes.
+
+/* 按对象保存插件数据，可延迟读取元素的 data 属性。复制和移除 DOM 时由调用方决定如何处理数据。 */
+
 const data = new WeakMap<object, Record<string, unknown>>()
 const readAttributes = new WeakSet<object>()
 export const camelCase = (name: string) => name.replace(/^-ms-/, 'ms-').replace(/-([a-z])/g, (_, char) => char.toUpperCase())
@@ -20,7 +23,7 @@ function parse(value: string): unknown {
     if (value === 'null') return null
     if (String(+value) === value) return +value
     if (/^(?:\{[\s\S]*\}|\[[\s\S]*\])$/.test(value)) {
-        try { return JSON.parse(value) } catch { /* Keep invalid JSON as text. */ }
+        try { return JSON.parse(value) } catch { /* 无法解析的 JSON 保留原始文本。 */ }
     }
     return value
 }

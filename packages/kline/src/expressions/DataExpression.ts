@@ -1,3 +1,5 @@
+/* 在给定行情索引读取原始数据字段，为指标的组合表达式提供输入。 */
+
 import type { DataProvider } from '../DataProvider.js'
 import { Expression } from './Expression.js'
 

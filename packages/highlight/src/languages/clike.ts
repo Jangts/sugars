@@ -1,10 +1,9 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `clike` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 提供 C 风格语言共享的注释、字符串、类型、调用和运算符词法。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 highlight.languages.clike = {
@@ -21,6 +20,7 @@ highlight.languages.clike = {
         pattern: /(["'])(\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,
         greedy: true
     },
+    // 类型名依赖声明或继承等上下文。上下文只用于判断，标记内容从实际名称开始。
     'class-name': {
         pattern: /((?:\b(?:class|interface|extends|implements|trait|instanceof|new)\s+)|(?:catch\s+\())[a-z0-9_\.\\]+/i,
         lookbehind: true,

@@ -1,10 +1,15 @@
+/* 同步单轴视口与外部轨道，处理滑块拖动和轨道点击，并恢复绑定前的 DOM 属性。 */
+
 import { pointerOffset, readAxis, trackSize } from './axis.js'
 import type { Axis } from './axis.js'
 import { getScrollMetrics, scrollOffsetFromThumb } from './geometry.js'
 
 export interface ScrollbarElements {
+    /** 调用方提供的轨道。滑块可为子节点或独立定位的兄弟节点。 */
     track: HTMLElement
+    /** 调用方提供的滑块，实例以 CSS 自定义属性同步尺寸和偏移。 */
     thumb: HTMLElement
+    /** 轴向最小长度，使用 CSS 像素。 */
     minThumbSize?: number
 }
 
@@ -66,6 +71,7 @@ export class ScrollbarBinding {
         return { scroll, metrics }
     }
 
+    /** 轨道点击使用整条轨道的比例。滑块拖动使用扣除滑块长度后的可移动行程。 */
     private onTrackDown = (event: PointerEvent): void => {
         if (!event.isPrimary || event.button !== 0 || event.composedPath().includes(this.thumb)) return
         const { scroll, metrics } = this.measure()
@@ -76,6 +82,7 @@ export class ScrollbarBinding {
         scroll.scrollTo(metrics.scrollRange * fraction, 'instant')
     }
 
+    /** 捕获当前指针，拖过轨道边缘时仍能继续。一旦指针取消或释放就清除拖动状态。 */
     private onThumbDown = (event: PointerEvent): void => {
         if (!event.isPrimary || event.button !== 0 || this.drag) return
         const { metrics } = this.measure()

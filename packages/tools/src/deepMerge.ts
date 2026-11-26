@@ -4,6 +4,14 @@ import copy from './copy.js'
 import mergeInto from './internal/mergeInto.js'
 import writeValue from './internal/writeValue.js'
 
+/**
+ * 在左对象的副本上递归合并两个对象。数组值由右侧整项替换。
+ *
+ * @param obj1 - 生成副本的左对象，null 视为空。
+ * @param obj2 - 右侧来源，冲突时覆盖非对象值。
+ * @returns 合并后的新对象。
+ * @throws 输入为数组或非对象时抛出旧式错误字符串。
+ */
 export default function deepMerge(obj1: object | null, obj2: object | null): Record<PropertyKey, unknown> {
     let object: Record<PropertyKey, unknown> = {};
     if ((typeof obj1 === 'object') && (typeof obj2 === 'object') && !(obj1 instanceof Array) && !(obj2 instanceof Array)) {

@@ -1,3 +1,5 @@
+/* 数组分类入口，汇总索引、删除、去重和极值函数。 */
+
 export { default as merge } from './mergeArrays.js'
 export { default as beObject } from './beObject.js'
 export { default as each } from './eachArray.js'

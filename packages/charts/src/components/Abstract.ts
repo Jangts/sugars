@@ -1,4 +1,7 @@
 /*! Ported from TangramJS painter/Charts/components/Abstract.js. */
+
+/* 管理绘图元素的属性快照。直接更新保留前值供过渡使用，动画按保存值和目标值计算当帧状态。 */
+
 import { eachEntry } from '../series-data.js'
 import { clone, isFinite } from 'lodash-es'
 

@@ -1,3 +1,5 @@
+/* 将基础算术组织为可组合的表达式节点，供指标公式复用。 */
+
 import { OperationExpression } from './OperationExpression.js'
 import type { BinaryOperands, UnaryOperands } from './OperationExpression.js'
 

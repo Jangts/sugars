@@ -2,6 +2,12 @@
 import base64Alphabet from './internal/base64Alphabet.js'
 import utf8Decode from './internal/utf8Decode.js'
 
+/**
+ * 先按 Base64 字母表还原字节，再按历史 UTF-8 编码规则还原字符串。
+ *
+ * @param input - 待解码文本。非字符串按空字符串处理，其他字符按旧算法过滤。
+ * @returns 使用历史字节编码还原出的文本。
+ */
 export default function base64Decode(input: unknown) {
     let text = typeof input === 'string' ? input : '';
     var output = "";

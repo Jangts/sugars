@@ -1,10 +1,9 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `gherkin` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 区分 Gherkin 功能、情景步骤、标签、参数表及多行文本。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 highlight.languages.gherkin = {
@@ -42,6 +41,7 @@ highlight.languages.gherkin = {
             keyword: /[^:\r\n]+:/
         }
     },
+    // 表体和表头分别标记，表格行有自己的边界，避免被普通步骤词法切开。
     'table-body': {
         pattern: /((?:\r?\n|\r)[ \t]*\|.+\|[^\r\n]*)+/,
         lookbehind: true,

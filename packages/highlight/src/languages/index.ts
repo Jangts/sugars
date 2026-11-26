@@ -1,5 +1,11 @@
-// Base and embedded grammars are registered before the rules that use them.
+/**
+ * `@sugars/highlight` 内置语言的登记入口，由包根入口加载。
+ *
+ * 各模块在导入时登记词法。基础词法、扩展它的语言及其内嵌语法须按依赖次序加载。
+ */
+
 import './abap.js'
+// C 风格语法、标记、CSS 和 JavaScript 会被后面的扩展复用。
 import './clike.js'
 import './markup.js'
 import './css.js'

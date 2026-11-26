@@ -1,3 +1,5 @@
+/* 定义跟随价格的均线和通道指标，可与价格序列叠加展示。 */
+
 import type { DataProvider } from '../DataProvider.js'
 import { NewExpression } from '../expressions/DataExpression.js'
 import { ConstExpression } from '../expressions/Expression.js'
@@ -43,7 +45,7 @@ export class BOLLIndicator extends CandlestickIndicator {
     }
 }
 
-// Preserve the old assign/output buffering so a shared expression updates once per bar.
+// 保留赋值与输出之间的缓冲，使共享表达式在每条行情上只更新一次。
 export class CachedExpression extends AssignExpression {
     private assigned = -1
 

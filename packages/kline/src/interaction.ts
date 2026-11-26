@@ -1,3 +1,5 @@
+/* 把鼠标、触摸、滚轮与键盘输入转成视图平移、缩放和选中位置，实例负责实际重绘。 */
+
 import type { KLine } from './index.js'
 
 interface Point {

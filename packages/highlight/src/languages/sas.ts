@@ -1,13 +1,13 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `sas` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 优先识别 SAS 输入数据块，并标记日期时间、语句和注释。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 highlight.languages.sas = {
+    // 输入数据块先于关键字和数字处理，避免将原始数据内容当成 SAS 程序语句。
     'datalines': {
         pattern: /^\s*(?:(?:data)?lines|cards);[\s\S]+?(?:\r?\n|\r);/im,
         alias: 'string',
@@ -32,7 +32,7 @@ highlight.languages.sas = {
     },
     'string': /(["'])(?:\1\1|(?!\1)[\s\S])*\1/,
     'keyword': /\b(?:data|else|format|if|input|proc|run|then)\b/i,
-    // Decimal (1.2e23), hexadecimal (0c1x)
+    // 十进制（1.2e23）和十六进制（0c1x）。
     'number': /(?:\B-|\b)(?:[\da-f]+x|\d+(?:\.\d+)?(?:e[+-]?\d+)?)/i,
     'operator': /\*\*?|\|\|?|!!?|¦¦?|<[>=]?|>[<=]?|[-+\/=&]|[~¬^]=?|\b(?:eq|ne|gt|lt|ge|le|in|not)\b/i,
     'punctuation': /[$%@.(){}\[\];,\\]/

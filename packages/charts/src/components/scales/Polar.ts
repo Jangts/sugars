@@ -1,4 +1,7 @@
 /*! Ported from TangramJS painter/Charts/components/scales/Polar.js. */
+
+/* 计算极坐标与雷达图的半径、角度和标签空间，再把数据坐标换算为画布位置。 */
+
 import { ChartElement } from '../Abstract.js'
 import { eachEntry } from '../../series-data.js'
 import { joinLists } from '../../series-data.js'
@@ -379,7 +382,7 @@ export class Polar extends ChartElement {
         }
     drawAngleLabels(ctx: CanvasRenderingContext2D, i: number) {
             if (this.angleLabelsShow) {
-                // Extra 3px out for some label spacing
+                // 轴标签与外缘留出 3 像素间距。
                 var pointLabelPosition = this.getPointPosition(this.calculateAngle(i), this.calculateRadius(i, this.maxRadius + 5));
                 ctx.font = fontString(this.angleLabelFontSize, this.angleLabelFontStyle, this.angleLabelFontFamily);
                 ctx.fillStyle = this.angleLabelFont;
@@ -399,7 +402,7 @@ export class Polar extends ChartElement {
                     ctx.textAlign = 'right';
                 }
 
-                // Set the correct text baseline based on outer positioning
+                // 按标签在外缘的方向选择文字基线。
                 if (exactQuarter) {
                     ctx.textBaseline = 'middle';
                 } else if (upperHalf) {

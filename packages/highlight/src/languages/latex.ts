@@ -1,10 +1,9 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `latex` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 标记 LaTeX 的命令、数学环境和文档结构。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 var funcPattern = /\\([^a-z()[\]]|[a-z\*]+)/i,
@@ -17,15 +16,16 @@ var funcPattern = /\\([^a-z()[\]]|[a-z\*]+)/i,
 
 highlight.languages.latex = {
     'comment': /%.*/m,
-    // the verbatim environment prints whitespace to the document
+    // verbatim 环境保留文档中的空白。
     'cdata': {
         pattern: /(\\begin\{((?:verbatim|lstlisting)\*?)\})([\w\W]*?)(?=\\end\{\2\})/,
         lookbehind: true
     },
     /*
-     * equations can be between $ $ or \( \) or \[ \]
+     * 公式可以用 $ $、\( \) 或 \[ \] 包裹。
      * (all are multiline)
      */
+    // 在匹配公式定界符时保留公式内部空白，语法着色不改变文档实际字符。
     'equation': [{
             pattern: /\$(?:\\?[\w\W])*?\$|\\\((?:\\?[\w\W])*?\\\)|\\\[(?:\\?[\w\W])*?\\\]/,
             inside: insideEqu,
@@ -39,8 +39,7 @@ highlight.languages.latex = {
         }
     ],
     /*
-     * arguments which are keywords or references are highlighted
-     * as keywords
+     * 关键字和引用参数使用关键字标记。
      */
     'keyword': {
         pattern: /(\\(?:begin|end|ref|cite|label|usepackage|documentclass)(?:\[[^\]]+\])?\{)[^}]+(?=\})/,
@@ -51,8 +50,7 @@ highlight.languages.latex = {
         lookbehind: true
     },
     /*
-     * section or chapter headlines are highlighted as bold so that
-     * they stand out more
+     * 章节标题使用加粗标记。
      */
     'headline': {
         pattern: /(\\(?:part|chapter|section|subsection|frametitle|subsubsection|paragraph|subparagraph|subsubparagraph|subsubsubparagraph)\*?(?:\[[^\]]+\])?\{)[^}]+(?=\}(?:\[[^\]]+\])?)/,

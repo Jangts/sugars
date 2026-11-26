@@ -1,3 +1,5 @@
+/* 实现集合的属性、类名、内容和表单操作。节点插入、复制以及移除时在此处理插件数据和事件。 */
+
 import type { RuntimeCollection, SelectionValue } from './runtime-types.js'
 import { copyData, removeData } from './data.js'
 import { clearEvents, copyEvents } from './events.js'
@@ -97,7 +99,7 @@ function insert(collection: RuntimeCollection, action: InsertionAction, content:
             const material = materialize(item, target)
             return i < targets.length - 1 ? material.map(node => copy(node, true, true)) : material
         }).filter(node => node !== target)
-        // Table rows inserted directly into an existing body follow the collection API.
+        // 插入表格行时优先使用已有的 tbody，沿用集合 API 的表格行为。
         const destination = ['append', 'prepend'].includes(action) && target.nodeName === 'TABLE' && nodes[0]?.nodeName === 'TR'
             ? (target as HTMLTableElement).tBodies[0] ?? target : target
         insert(destination, nodes)

@@ -1,3 +1,5 @@
+/* 绘制各图表区域的参考线及坐标轴标签，刻度来自当前布局和值域。 */
+
 import { timeAxisHeight } from '../Layout.js'
 import { Brush } from './Brush.js'
 

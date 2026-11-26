@@ -1,4 +1,7 @@
 /*! Ported from TangramJS painter/Charts/components/sharps/Arc.js. */
+
+/* 管理饼图扇区的角度、内外半径和绘制状态，同一几何用于指针命中判断。 */
+
 import { ChartElement } from '../Abstract.js'
 import * as helpers from '../../util/helpers.js'
 
@@ -11,19 +14,19 @@ export class Arc extends ChartElement {
                 y: chartY
             });
 
-            // Normalize all angles to 0 - 2*PI (0 - 360°)
+            // 将扇区角度归一到一周内。
             var pointRelativeAngle = pointRelativePosition.angle % (Math.PI * 2),
                 startAngle = (Math.PI * 2 + this.startAngle) % (Math.PI * 2),
                 endAngle = (Math.PI * 2 + this.endAngle) % (Math.PI * 2) || 360;
 
-            // Calculate wether the pointRelativeAngle is between the start and the end angle
+            // 检查指针角度是否落在扇区起止角之间。
             var betweenAngles = (endAngle < startAngle) ? pointRelativeAngle <= endAngle || pointRelativeAngle >= startAngle : pointRelativeAngle >= startAngle && pointRelativeAngle <= endAngle;
 
-            //Check if within the range of the open/close angle
+            // 跨过一周边界的扇区按首尾两个区间判断。
             var withinRadius = (pointRelativePosition.distance >= this.innerRadius && pointRelativePosition.distance <= this.outerRadius);
 
             return (betweenAngles && withinRadius);
-            //Ensure within the outside of the arc centre, but inside arc outer
+            // 径向距离须介于内外半径之间。
         }
     tooltipPosition() {
             var centreAngle = this.startAngle + ((this.endAngle - this.startAngle) / 2),

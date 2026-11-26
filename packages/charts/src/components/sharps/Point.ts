@@ -1,4 +1,7 @@
 /*! Ported from TangramJS painter/Charts/components/sharps/Point.js. */
+
+/* 绘制普通和高亮数据点，并根据系列的坐标模式和命中半径判定交互。 */
+
 import { ChartElement } from '../Abstract.js'
 
 export class Point extends ChartElement {

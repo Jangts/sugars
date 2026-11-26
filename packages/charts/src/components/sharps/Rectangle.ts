@@ -1,4 +1,7 @@
 /*! Ported from TangramJS painter/Charts/components/sharps/Rectangle.js. */
+
+/* 绘制沿横轴或纵轴伸展的柱体，将普通柱与区间柱的起点、终点用于绘制与命中。 */
+
 import { ChartElement } from '../Abstract.js'
 import { isFinite } from 'lodash-es'
 
@@ -31,8 +34,7 @@ export class Rectangle extends ChartElement {
                 endY = this.y2,
                 halfStroke = this.strokeWidth / 2;
 
-            // Canvas doesn't allow us to stroke inside the width so we can
-            // adjust the sizes to fit if we're setting a stroke on the line
+            // Canvas 以路径为中心描边。启用描边时收窄可用边界，让描边落在柱宽内。
             if (this.showStroke) {
                 leftX += halfStroke;
                 rightX -= halfStroke;
@@ -50,8 +52,7 @@ export class Rectangle extends ChartElement {
             ctx.strokeStyle = this.strokeColor;
             ctx.lineWidth = this.strokeWidth;
 
-            // It'd be nice to keep this class totally generic to any rectangle
-            // and simply specify which border to miss out.
+            // 旧实现按柱体方向指定哪些边需要描边。
             ctx.moveTo(leftX, startY);
             ctx.lineTo(leftX, endY);
             ctx.lineTo(rightX, endY);
@@ -73,8 +74,7 @@ export class Rectangle extends ChartElement {
                 bottomY = this.y2 + halfHeight,
                 halfStroke = this.strokeWidth / 2;
 
-            // Canvas doesn't allow us to stroke inside the width so we can
-            // adjust the sizes to fit if we're setting a stroke on the line
+            // Canvas 以路径为中心描边。启用描边时收窄可用边界，让描边落在柱宽内。
             if (this.showStroke) {
                 topY += halfStroke;
                 bottomY -= halfStroke;
@@ -90,8 +90,7 @@ export class Rectangle extends ChartElement {
             ctx.strokeStyle = this.strokeColor;
             ctx.lineWidth = this.strokeWidth;
 
-            // It'd be nice to keep this class totally generic to any rectangle
-            // and simply specify which border to miss out.
+            // 旧实现按柱体方向指定哪些边需要描边。
             ctx.moveTo(startX, topY);
             ctx.lineTo(endX, topY);
             ctx.lineTo(endX, bottomY);

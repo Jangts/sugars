@@ -1,4 +1,7 @@
 /*! Ported from TangramJS painter/Charts/types/Bar.js. */
+
+/* 把标量或区间数据装配为柱体，沿当前数值轴计算起止位置，并在同类系列之间分配宽度和间距。 */
+
 import type { BarSeries as BarOptions } from '../types.js'
 import { SeriesRenderer, type ResolvedSeries } from './Abstract.js'
 import { Rectangle } from '../components/sharps/Rectangle.js'
@@ -288,7 +291,7 @@ export function bar(this: Charts) {
                     return (this.calculateX(1) - this.calculateX(0)) - (2 * valueSpacing);
                 },
                 calculateBarWidth: function(this: Grid, datasetCount: number, datasetSpacing: number, valueSpacing: number) {
-                    //The padding between datasets is to the right of each bar, providing that there are more than 1 dataset
+                    // 当同一位置有多个系列时，在柱体之后预留组内间隔。
                     var baseWidth = this.calculateBaseWidth(valueSpacing) - ((datasetCount - 1) * datasetSpacing);
                     return Math.max(0, baseWidth / datasetCount);
                 },
@@ -303,7 +306,7 @@ export function bar(this: Charts) {
                     return (this.calculateY(0) - this.calculateY(1)) - (2 * valueSpacing);
                 },
                 calculateBarHeight: function(this: Grid, datasetCount: number, datasetSpacing: number, valueSpacing: number) {
-                    //The padding between datasets is to the right of each bar, providing that there are more than 1 dataset
+                    // 当同一位置有多个系列时，在柱体之后预留组内间隔。
                     var baseHeight = this.calculateBaseHeight(valueSpacing) - ((datasetCount - 1) * datasetSpacing);
                     return Math.max(0, baseHeight / datasetCount);
                 }

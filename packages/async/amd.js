@@ -1,3 +1,5 @@
+/* TangramJS AMD 加载器的 ES5 入口。每个加载器独立管理模块定义、路径配置和执行缓存，支持浏览器脚本及 CommonJS。 */
+
 (function (root, factory) {
     if (typeof module === 'object' && module.exports) module.exports = factory(root);
     else if (typeof define === 'function' && define.amd) define([], function () { return factory(root); });
@@ -75,6 +77,7 @@
         }
     }
 
+    /** 创建独立模块表和浏览器脚本队列，调用方可选择是否把 define 与 require 安装到全局。 */
     function createAmdLoader(options) {
         options = options || {};
         var document = options.document || root.document;
@@ -150,7 +153,7 @@
         function define() {
             var current = document && document.currentScript;
             if (current && current[timedOutScript]) return;
-            // One active request supplies a fallback for engines without document.currentScript.
+            // 旧浏览器没有 document.currentScript 时，用唯一在途请求关联匿名模块。
             var request = active && (!('currentScript' in document) || document.currentScript === active.node) ? active : null;
             try {
                 var definition = readDefinition(arguments);
@@ -177,7 +180,7 @@
                     start(request);
                     return;
                 }
-                // A bundle that just loaded may already have registered every queued ID.
+                // 刚完成加载的脚本可能已登记此请求等待的全部模块。
                 delete scripts[request.url];
                 notify(request, null);
             }
@@ -215,7 +218,7 @@
             var timer = root.setTimeout(function () {
                 if (request !== active) return;
                 node[timedOutScript] = true;
-                // The browser can still have the previous URL in flight after we remove its node.
+                // 移除 script 节点后旧请求仍可能在途，因此重试使用带标识的新 URL。
                 retries[request.url] = Date.now() + '-' + (++retrySequence);
                 finish(new Error('AMD script timed out: ' + request.url));
             }, timeoutMs);
@@ -279,6 +282,7 @@
             }
         }
 
+        /** 模块工厂至多执行一次。循环依赖读取模块处于执行阶段时已有的 exports。 */
         function execute(id, acquire) {
             var definition = definitions[id];
             if (!definition || (!acquire && definition.state === 'defined')) {
@@ -306,6 +310,7 @@
             }
         }
 
+        /** 先递归收齐入口及依赖定义，再执行工厂并按请求顺序传递结果。 */
         function load(ids, parent, callback, onError) {
             var visited = Object.create(null);
             var dependencies = [];

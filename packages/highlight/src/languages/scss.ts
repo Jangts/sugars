@@ -1,10 +1,9 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `scss` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 沿用 CSS 词法结构并加入 SCSS 变量、占位选择器和控制语句。
  */
+
 import { highlighter as highlight } from '../core.js'
 import { cloneGrammar, insideGrammar } from '../grammar.js'
 
@@ -17,20 +16,15 @@ highlight.languages.scss = highlight.languages.extend('css', {
         pattern: /@[\w-]+(?:\([^()]+\)|[^(])*?(?=\s+[{;])/,
         inside: {
             'rule': /@[\w-]+/
-                // See rest below
+                // 嵌套规则在下方补入。
         }
     },
-    // url, compassified
+    // 覆盖 Compass 使用的 URL 形式。
     'url': /(?:[-a-z]+-)*url(?=\()/i,
-    // CSS selector regex is not appropriate for Sass
-    // since there can be lot more things (var, @ directive, nesting..)
-    // a selector must start at the end of a property or after a brace (end of other rules or nesting)
-    // it can contain some characters that aren't used for defining rules or end of selector, & (parent selector), or interpolated variable
-    // the end of a selector is found when there is no rules in it ( {} or {\s}) or if there is a property (because an interpolated var
-    // can "pass" as a selector- e.g: proper#{$erty})
-    // this one was hard to do, so please be careful if you edit this one :)
+    // 从属性或规则块边界识别选择器。允许 & 和插值，并检查随后的花括号内容，避免把属性名插值当作选择器。
+    // 此规则依赖后续花括号内容区分选择器和属性插值。保留规则次序才能让前面的 at 规则先退出。
     'selector': {
-        // Initial look-ahead is used to prevent matching of blank selectors
+        // 开头的前瞻排除空白选择器。
         pattern: /(?=\S)[^@;\{\}\(\)]?([^@;\{\}\(\)]|&|#\{\$[-_\w]+\})+(?=\s*\{(\}|\s|[^\}]+(:|\{)[^\}]+))/m,
         inside: {
             'placeholder': /%[-_\w]+/
@@ -46,7 +40,7 @@ highlight.languages.insertBefore('scss', 'atrule', {
 });
 
 highlight.languages.insertBefore('scss', 'property', {
-    // var and interpolated vars
+    // 变量及插值变量。
     'variable': /\$[-_\w]+|#\{\$[-_\w]+\}/
 });
 

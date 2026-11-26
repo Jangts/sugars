@@ -1,4 +1,7 @@
 // TangramJS util/type.js:98
+
+/* 把字符串细分为整数文本、小数文本和普通文本。 */
+
 import isIntStr from '../isIntStr.js'
 import isFloatStr from '../isFloatStr.js'
 

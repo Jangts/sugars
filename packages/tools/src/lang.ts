@@ -1,3 +1,5 @@
+/* 类型分类入口，汇总通用类型和数组、数值文本检查。 */
+
 export { default as isArray } from './isArray.js'
 export { default as isInteger } from './isInteger.js'
 export { default as isIntStr } from './isIntStr.js'

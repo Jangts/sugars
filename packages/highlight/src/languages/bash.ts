@@ -1,20 +1,20 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `bash` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 区分 shell 变量展开、引号和命令关键字，字符串内部继续识别展开式。
  */
+
 import { highlighter as highlight } from '../core.js'
 import { insideGrammar } from '../grammar.js'
 
 var insideString = {
+    // 变量候选包含算术展开和命令替换。专门分支必须先于普通变量名，才能保留整个展开式。
     variable: [
-        // Arithmetic Environment
+        // 算术环境。
         {
             pattern: /\$?\(\([\w\W]+?\)\)/,
             inside: {
-                // If there is a $ sign at the beginning highlight $(( and )) as variable
+                // 算术展开带 $ 前缀时，以变量标记起止符号。
                 variable: [{
                         pattern: /(^\$\(\([\w\W]+)\)\)/,
                         lookbehind: true
@@ -22,13 +22,13 @@ var insideString = {
                     /^\$\(\(/,
                 ],
                 number: /\b-?(?:0x[\dA-Fa-f]+|\d*\.?\d+(?:[Ee]-?\d+)?)\b/,
-                // Operators according to https://www.gnu.org/software/bash/manual/bashref.html#Shell-Arithmetic
+                // 运算符参照 https://www.gnu.org/software/bash/manual/bashref.html#Shell-Arithmetic
                 operator: /--?|-=|\+\+?|\+=|!=?|~|\*\*?|\*=|\/=?|%=?|<<=?|>>=?|<=?|>=?|==?|&&?|&=|\^=?|\|\|?|\|=|\?|:/,
-                // If there is no $ sign at the beginning highlight (( and )) as punctuation
+                // 不带 $ 前缀的双括号按标点处理。
                 punctuation: /\(\(?|\)\)?|,|;/
             }
         },
-        // Command Substitution
+        // 命令替换。
         {
             pattern: /\$\([^)]+\)|`[^`]+`/,
             inside: {
@@ -49,7 +49,7 @@ highlight.languages.bash = {
         lookbehind: true
     },
     'string': [
-        //Support for Here-Documents https://en.wikipedia.org/wiki/Here_document
+        // 支持 Here-Document，语法参考 https://en.wikipedia.org/wiki/Here_document
         {
             pattern: /((?:^|[^<])<<\s*)(?:"|')?(\w+?)(?:"|')?\s*\r?\n(?:[\s\S])*?\r?\n\2/g,
             lookbehind: true,
@@ -61,7 +61,7 @@ highlight.languages.bash = {
         }
     ],
     'variable': insideString.variable,
-    // Originally based on http://ss64.com/bash/
+    // 原始规则参考 http://ss64.com/bash/
     'function': {
         pattern: /(^|\s|;|\||&)(?:alias|apropos|apt-get|aptitude|aspell|awk|basename|bash|bc|bg|builtin|bzip2|cal|cat|cd|cfdisk|chgrp|chmod|chown|chroot|chkconfig|cksum|clear|cmp|comm|command|cp|cron|crontab|csplit|cut|date|dc|dd|ddrescue|df|diff|diff3|dig|dir|dircolors|dirname|dirs|dmesg|du|egrep|eject|enable|env|ethtool|eval|exec|expand|expect|export|expr|fdformat|fdisk|fg|fgrep|file|find|fmt|fold|format|free|fsck|ftp|fuser|gawk|getopts|git|grep|groupadd|groupdel|groupmod|groups|gzip|hash|head|help|hg|history|hostname|htop|iconv|id|ifconfig|ifdown|ifup|import|install|jobs|join|kill|killall|less|link|ln|locate|logname|logout|look|lpc|lpr|lprint|lprintd|lprintq|lprm|ls|lsof|make|man|mkdir|mkfifo|mkisofs|mknod|more|most|mount|mtools|mtr|mv|mmv|nano|netstat|nice|nl|nohup|notify-send|nslookup|open|op|passwd|paste|pathchk|ping|pkill|popd|pr|printcap|printenv|printf|ps|pushd|pv|pwd|quota|quotacheck|quotactl|ram|rar|rcp|read|readarray|readonly|reboot|rename|renice|remsync|rev|rm|rmdir|rsync|screen|scp|sdiff|sed|seq|service|sftp|shift|shopt|shutdown|sleep|slocate|sort|source|split|ssh|stat|strace|su|sudo|sum|suspend|sync|tail|tar|tee|test|time|timeout|times|touch|top|traceroute|trap|tr|tsort|tty|type|ulimit|umask|umount|unalias|uname|unexpand|uniq|units|unrar|unshar|uptime|useradd|userdel|usermod|users|uuencode|uudecode|v|vdir|vi|vmstat|wait|watch|wc|wget|whereis|which|who|whoami|write|xargs|xdg-open|yes|zip)(?=$|\s|;|\||&)/,
         lookbehind: true

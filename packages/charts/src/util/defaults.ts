@@ -1,6 +1,8 @@
 /*! Ported from TangramJS painter/Charts/util/defaults.js. */
 
 
+/* 保存比例尺和系列装配所用的默认配置，调用方覆盖各自配置中的对应成员。 */
+
 export const baseDefaults = {
         backgroundColor: 'transparent',
         barColorDefaults: ['#A6CEE3', '#1F78B4', '#B2DF8A', '#33A02C', '#FB9A99', '#E31A1C', '#FDBF6F', '#FF7F00', '#CAB2D6', '#6A3D9A', '#B4B482', '#B15928'],

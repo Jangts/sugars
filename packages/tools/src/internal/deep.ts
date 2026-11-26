@@ -1,4 +1,7 @@
 // TangramJS tangram.js:274
+
+/* 递归复制普通对象的自有成员和数组元素，其他类型沿用原值。 */
+
 import each from '../each.js'
 import writeValue from './writeValue.js'
 

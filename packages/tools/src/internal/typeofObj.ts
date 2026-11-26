@@ -1,4 +1,7 @@
 // TangramJS util/type.js:17
+
+/* 先辨识窗口、文档、元素和集合，再回退到原生对象标签。 */
+
 import isArray from '../isArray.js'
 import isGlobal from './isGlobal.js'
 import isDoc from './isDoc.js'

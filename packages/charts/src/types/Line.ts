@@ -1,4 +1,7 @@
 /*! Ported from TangramJS painter/Charts/types/Line.js. */
+
+/* 装配折线的数据点和相邻线段，计算坐标、平滑曲线、填充区域及命中结果。 */
+
 import type { LineSeries as LineOptions } from '../types.js'
 import { SeriesRenderer, type ResolvedSeries } from './Abstract.js'
 import { Line } from '../components/sharps/Line.js'

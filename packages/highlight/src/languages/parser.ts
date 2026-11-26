@@ -1,10 +1,9 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `parser` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 在标记嵌套中识别 Parser 模板表达式、变量、转义及注释。
  */
+
 import { highlighter as highlight } from '../core.js'
 import { grammarPattern, insideGrammar } from '../grammar.js'
 
@@ -43,8 +42,9 @@ highlight.languages.insertBefore('parser', 'keyword', {
         lookbehind: true,
         alias: 'comment'
     },
+    // 表达式匹配有固定嵌套深度。单独留出该候选，可保住内部定界符供嵌套词法识别。
     'expression': {
-        // Allow for 3 levels of depth
+        // 最多允许三层嵌套。
         pattern: /(^|[^^])\((?:[^()]|\((?:[^()]|\((?:[^()])*\))*\))*\)/,
         lookbehind: true,
         inside: {

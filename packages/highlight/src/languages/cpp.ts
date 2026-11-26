@@ -1,10 +1,9 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `cpp` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 扩展 C 的词法以识别 C++ 类型名、关键字与运算符。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 highlight.languages.cpp = highlight.languages.extend('c', {
@@ -13,6 +12,7 @@ highlight.languages.cpp = highlight.languages.extend('c', {
     'operator': /[-+]{1,2}|!=?|<{1,2}=?|>{1,2}=?|\->|:{1,2}|={1,2}|\^|~|%|&{1,2}|\|?\||\?|\*|\/|\b(and|and_eq|bitand|bitor|not|not_eq|or|or_eq|xor|xor_eq)\b/
 });
 highlight.languages.insertBefore('cpp', 'keyword', {
+    // 匹配 C++ 类型声明中的名称时保留声明上下文，扩展后的规则仍继承 C 的宏与字面量处理。
     'class-name': {
         pattern: /(class\s+)[a-z0-9_]+/i,
         lookbehind: true

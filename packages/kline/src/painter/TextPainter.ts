@@ -1,3 +1,5 @@
+/* 集中处理 Canvas 文字的样式、对齐、测量与输出。 */
+
 import type { Canvas } from '../Canvas.js'
 
 interface ImageFill {

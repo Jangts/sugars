@@ -1,10 +1,9 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `c` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 沿用 C 风格通用词法，补入 C 的预处理指令、常量和数值格式。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 highlight.languages.c = highlight.languages.extend('clike', {
@@ -14,19 +13,20 @@ highlight.languages.c = highlight.languages.extend('clike', {
 });
 
 highlight.languages.insertBefore('c', 'string', {
+    // 先识别完整的预处理行及其续行，再拆出 include 路径、指令和内部语法，避免被通用规则切断。
     'macro': {
-        // allow for multiline macro definitions
-        // spaces after the # character compile fine with gcc
+        // 宏定义可以续行。
+        // gcc 允许 # 之后有空格。
         pattern: /(^\s*)#\s*[a-z]+([^\r\n\\]|\\.|\\(?:\r\n?|\n))*/im,
         lookbehind: true,
         alias: 'property',
         inside: {
-            // highlight the path of the include statement as a string
+            // include 路径按字符串标记。
             'string': {
                 pattern: /(#\s*include\s*)(<.+?>|("|')(\\?.)+?\3)/,
                 lookbehind: true
             },
-            // highlight macro directives as keywords
+            // 宏指令按关键字标记。
             'directive': {
                 pattern: /(#\s*)\b(define|elif|else|endif|error|ifdef|ifndef|if|import|include|line|pragma|undef|using)\b/,
                 lookbehind: true,
@@ -34,7 +34,7 @@ highlight.languages.insertBefore('c', 'string', {
             }
         }
     },
-    // highlight predefined macros as constants
+    // 预定义宏按常量标记。
     'constant': /\b(__FILE__|__LINE__|__DATE__|__TIME__|__TIMESTAMP__|__func__|EOF|NULL|stdin|stdout|stderr)\b/
 });
 

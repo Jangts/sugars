@@ -1,4 +1,12 @@
 /*! Ported from GrandAPP K Line Mobile. See THIRD-PARTY-NOTICES.md. */
+
+/**
+ * `@sugars/kline` 的公开入口。
+ *
+ * K 线实例组装行情、布局、图表和交互，统一管理刷新、尺寸响应和释放。
+ * `KLine` 接入宿主并管理主图、指标和输入。公开 `Data`、`Theme`、预设主题以及相关输入类型。
+ */
+
 import { Canvas } from './Canvas.js'
 import type { CanvasName } from './Canvas.js'
 import { DataProvider } from './DataProvider.js'
@@ -35,6 +43,10 @@ export class KLine {
     private readonly listener: AbortController
     private readonly observer?: ResizeObserver
 
+    /**
+     * @param options - 宿主、行情、布局和主题配置。
+     * @throws {TypeError} 宿主不存在或行情字段无效。
+     */
     constructor(options: KLineOptions) {
         const element = typeof options.element === 'string' ? globalThis.document?.getElementById(options.element) : options.element
         const view = element?.ownerDocument?.defaultView
@@ -77,6 +89,10 @@ export class KLine {
         }
     }
 
+    /**
+     * @param width - CSS 长度或像素值，undefined 保留已有宽度，null 使用 100%。
+     * @param height - CSS 长度或像素值，undefined 保留已有高度，null 使用 100%。
+     */
     setSize(width?: string | number | null, height?: string | number | null): void {
         const style = this.surface.style
         if (typeof width === 'number') style.width = Math.max(0, width) + 'px'
@@ -86,21 +102,36 @@ export class KLine {
         this.measure()
     }
 
+    /**
+     * @param width - 与 setSize 相同的宽度。
+     * @param height - 与 setSize 相同的高度。
+     */
     resize(width?: string | number | null, height?: string | number | null): void {
         this.setSize(width, height)
     }
 
+    /**
+     * 应用新主题并重绘。
+     * @param theme - 主题实例或需要补齐缺省值的配置。
+     * @param isDark - 为局部配置指定暗色基准。
+     */
     setTheme(theme: Theme | Partial<ThemeInterface>, isDark = true): void {
         this.theme = theme instanceof Theme ? theme : new Theme(theme, isDark)
         this.draw()
     }
 
+    /**
+     * @param canvasName - temp、main 或 overlay。
+     * @returns 所选图层使用的画笔。
+     * @throws {TypeError} 图层名称未知。
+     */
     getPainter(canvasName: CanvasName): Painter {
         const canvas = this.canvases[canvasName]
         if (!canvas) throw new TypeError('Unknown KLine canvas: ' + canvasName)
         return canvas.painter
     }
 
+    /** @param layoutConf - 按展示顺序排列的图表名。更新后清除旧选区并重新测量。 */
     setLayout(layoutConf: readonly ChartName[]): void {
         const layout = new Layout(layoutConf, this)
         layout.setDataLength(this.dataProvider.storage.length)
@@ -110,6 +141,12 @@ export class KLine {
         this.measure()
     }
 
+    /**
+     * 替换并规范化整段行情，更新视图长度并清空当前选中位置。
+     *
+     * @param data - 允许无序或重复时间戳的行情记录。
+     * @throws {TypeError} 单条行情缺字段或价格关系无效。
+     */
     setData(data: readonly KLineBar[]): void {
         this.dataProvider.reset(data)
         this.layout.setDataLength(this.dataProvider.storage.length)
@@ -117,8 +154,15 @@ export class KLine {
         this.draw()
     }
 
+    /**
+     * 补入一条行情。回看历史时用时间戳保住右侧锚点，避免早期数据补入后发生索引漂移。
+     *
+     * @param data - 一条行情，相同时间戳会替换原记录。
+     * @throws {TypeError} 行情校验失败。
+     */
     appendData(data: KLineBar): void {
         const { dataProvider, layout } = this
+        // 当前视图在尾端时继续跟随新增行情。回看历史时保持右侧的时间锚点，以免早期数据插入后画面平移。
         const anchor = layout.following ? undefined : dataProvider.getDataAt(layout.end - 1)?.t
         const selected = this.selection && dataProvider.getDataAt(this.selection.index)?.t
         dataProvider.append(data)
@@ -133,6 +177,13 @@ export class KLine {
         this.draw()
     }
 
+    /**
+     * 根据图表区域内的逻辑像素坐标选中行情。省略坐标可清除十字光标。
+     *
+     * @param x - 相对图表表面的横坐标，缺省清除选中项。
+     * @param y - 相对图表表面的纵坐标，需落在行情区内。
+     * @param redraw - 是否立即重绘覆盖层。
+     */
     select(x?: number, y?: number, redraw = true): void {
         if (this.listener.signal.aborted) return
         const index = x === undefined ? undefined : this.layout.indexAt(x)
@@ -158,6 +209,7 @@ export class KLine {
         this.canvases.forEach(canvas => canvas.clear())
     }
 
+    /** 移除实例创建的表面，释放输入和尺寸监听。 */
     destroy(): void {
         if (this.listener.signal.aborted) return
         this.listener.abort()

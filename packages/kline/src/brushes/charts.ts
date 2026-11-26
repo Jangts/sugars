@@ -1,3 +1,5 @@
+/* 绘制 K 线、价格线、指标线与量柱，把行情或表达式值换算为图表坐标。 */
+
 import { formatValue } from './grids.js'
 import { Brush } from './Brush.js'
 

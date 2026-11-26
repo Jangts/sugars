@@ -1,4 +1,7 @@
 /*! Ported from TangramJS painter/Charts/util/events.js. */
+
+/* 把鼠标或触摸事件换算为相对画布坐标，供系列使用同一个命中坐标系。 */
+
 import type { Charts } from '../index.js'
 
 export function getRelativePosition(event: MouseEvent | TouchEvent): { x: number; y: number } {

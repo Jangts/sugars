@@ -1,15 +1,15 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `pure` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 识别 Pure 语法，并对声明了语言的内嵌代码应用对应词法。
  */
+
 import { highlighter as highlight } from '../core.js'
 import type { Grammar } from '../grammar.js'
 import { cloneGrammar, insideGrammar } from '../grammar.js'
 
 highlight.languages.pure = {
+    // 先保存内嵌内容，再根据声明语种选择词法。缺省使用 C，并保留所选语种的样式别名。
     'inline-lang': {
         pattern: /%<[\s\S]+?%>/,
         inside: {
@@ -36,7 +36,7 @@ highlight.languages.pure = {
     ],
     'string': /"(?:\\.|[^"\\\r\n])*"/,
     'number': {
-        // The look-behind prevents wrong highlighting of the .. operator
+        // 后顾避免拆开 .. 运算符。
         pattern: /((?:\.\.)?)(?:\b(?:inf|nan)\b|\b0x[\da-f]+|(?:\b(?:0b)?\d+(?:\.\d)?|\B\.\d)\d*(?:e[+-]?\d+)?L?)/i,
         lookbehind: true
     },
@@ -46,9 +46,9 @@ highlight.languages.pure = {
         pattern: /\b__[a-z]+__\b/i,
         alias: 'builtin'
     },
-    // Any combination of operator chars can be an operator
+    // 运算符字符可以组成自定义运算符。
     'operator': /(?=\b_|[^_])[!"#$%&'*+,\-.\/:<=>?@\\^_`|~\u00a1-\u00bf\u00d7-\u00f7\u20d0-\u2bff]+|\b(?:and|div|mod|not|or)\b/,
-    // FIXME: How can we prevent | and , to be highlighted as operator when they are used alone?
+    // 待区分独立的竖线、逗号与复合运算符。
     'punctuation': /[(){}\[\];,|]/
 };
 
@@ -75,7 +75,7 @@ inlineLanguages.forEach(function(lang) {
     }
 });
 
-// C is the default inline language
+// 未指定语言的内嵌代码使用 C 词法。
 if (highlight.languages.c) {
     insideGrammar(highlight.languages.pure!['inline-lang']).rest = cloneGrammar(highlight.languages.c);
 }

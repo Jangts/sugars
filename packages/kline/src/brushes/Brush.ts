@@ -1,3 +1,5 @@
+/* 画笔基类连接绘制上下文和图表坐标，具体画笔实现各自图形和样式。 */
+
 import type { Canvas } from '../Canvas.js'
 import type { Chart } from '../charts/Chart.js'
 

@@ -1,4 +1,7 @@
 /*! Adapted from TangramJS painter/canvas.js. */
+
+/* 提供多个图层和系列共用的 Canvas 操作，包括像素比缩放、文字测量与基础路径。 */
+
 export function fontString(pixelSize: number, fontStyle: string, fontFamily: string): string {
   return `${fontStyle} ${pixelSize}px ${fontFamily}`
 }

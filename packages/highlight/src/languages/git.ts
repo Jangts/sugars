@@ -1,16 +1,15 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `git` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 标记 Git 输出与交互式命令中的变更行、命令和区块坐标。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 highlight.languages.git = {
     /*
-     * A simple one line comment like in a git status command
-     * For instance:
+     * 标记 git status 里的井号说明行。
+     * 例如
      * $ git status
      * # On branch infinite-scroll
      * # Your branch and 'origin/sharedBranches/frontendTeam/infinite-scroll' have diverged,
@@ -20,27 +19,28 @@ highlight.languages.git = {
     'comment': /^#.*/m,
 
     /*
-     * Regexp to match the changed lines in a git diff output. Check the example below.
+     * 区分 git diff 中的删除与新增行。
      */
+    // 区块坐标或 Git 输出中的变更行只按文本样式高亮，规则不推断仓库状态。
     'deleted': /^[-–].*/m,
     'inserted': /^\+.*/m,
 
     /*
-     * a string (double and simple quote)
+     * 字符串可以用单引号或双引号包裹。
      */
     'string': /("|')(\\?.)*?\1/m,
 
     /*
-     * a git command. It starts with a random prompt finishing by a $, then "git" then some other parameters
-     * For instance:
+     * 行中出现终端提示符和 git 命令时，继续识别其参数。
+     * 例如
      * $ git add file.txt
      */
     'command': {
         pattern: /^.*\$ git .*$/m,
         inside: {
             /*
-             * A git command can contain a parameter starting by a single or a double dash followed by a string
-             * For instance:
+             * 参数支持单连字符与双连字符开头。
+             * 例如
              * $ git diff --cached
              * $ git log -p
              */
@@ -49,8 +49,8 @@ highlight.languages.git = {
     },
 
     /*
-     * Coordinates displayed in a git diff command
-     * For instance:
+     * 匹配 git diff 的区块坐标。
+     * 例如
      * $ git diff
      * diff --git file.txt file.txt
      * index 6214953..1d54a52 100644
@@ -64,8 +64,8 @@ highlight.languages.git = {
     'coord': /^@@.*@@$/m,
 
     /*
-     * Match a "commit [SHA1]" line in a git log output.
-     * For instance:
+     * 识别 git log 的 commit 行及四十位提交标识。
+     * 例如
      * $ git log
      * commit a11a14ef7e26f2ca62d4b35eac455ce636d0dc09
      * Author: lgiraudel

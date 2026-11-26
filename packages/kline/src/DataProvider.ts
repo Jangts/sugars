@@ -1,3 +1,5 @@
+/* 持有行情存储和窗口数据，集中处理历史数据、实时更新及时间索引。 */
+
 import type { KLine } from './index.js'
 
 export type KLineTuple = readonly [time: number, open: number, high: number, low: number, close: number, volume: number, turnover?: number]
@@ -25,6 +27,7 @@ export class Data {
 
 export type KLineBar = Data | KLineTuple | KLineServerBar
 
+/** 把服务端秒时间戳转换成毫秒，元组和 Data 输入使用已有的毫秒时间戳。 */
 function normalize(bar: KLineBar): Data {
     if (!bar || typeof bar !== 'object') throw new TypeError('Expected a K-line bar')
     let values: KLineTuple
@@ -52,6 +55,12 @@ export class DataProvider {
         this.reset(data)
     }
 
+    /**
+     * 校验后按时间排序。同一时间戳重复出现时，取最后一条记录。
+     *
+     * @param items - 新的数据集。先规范化全部记录，再发布新的有序存储。
+     * @throws {TypeError} 任一行情记录无效。
+     */
     reset(items: readonly KLineBar[]): void {
         const indexed = new Map(items.map(item => {
             const bar = normalize(item)

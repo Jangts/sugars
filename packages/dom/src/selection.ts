@@ -1,3 +1,5 @@
+/* 将选择器、原生节点或值序列转换成集合，处理选择器扩展、集合筛选与 end() 回退链。 */
+
 import type { SelectionPredicate, SelectionValue } from './runtime-types.js'
 
 // TangramJS src/dom/Elements.js, collection construction and traversal.

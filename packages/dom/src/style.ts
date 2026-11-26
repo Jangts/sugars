@@ -1,3 +1,5 @@
+/* 负责 CSS、尺寸、滚动及坐标访问，统一计算 box-sizing、边框、内外间距和视口滚动。 */
+
 import type { RuntimeCollection, SelectionValue } from './runtime-types.js'
 import type { Offset, Setter } from './index.js'
 import { camelCase } from './data.js'
@@ -64,6 +66,7 @@ function readSize(element: SelectionValue, axis: Axis, kind: Dimension) {
     let content = Number.parseFloat(style[axis])
     if (!Number.isFinite(content) || !/px$/.test(style[axis])) {
         content = element.getBoundingClientRect()[axis] - padding - border
+    // 浏览器给出的 border-box 尺寸包含边框与内边距。先换算成内容尺寸，再按调用的 getter 加回对应部分。
     } else if (style.boxSizing === 'border-box') content -= padding + border
     if (kind === 'inner') return Math.max(0, content) + padding
     if (kind === 'outer') return Math.max(0, content) + padding + border

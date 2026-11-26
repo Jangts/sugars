@@ -1,10 +1,9 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `inform7` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 标记 Inform 7 的标题、替换式、叙事关键字和属性。
  */
+
 import { highlighter as highlight } from '../core.js'
 import { cloneGrammar, insideGrammar } from '../grammar.js'
 
@@ -19,7 +18,7 @@ highlight.languages.inform7 = {
                         pattern: /\[|\]/,
                         alias: 'punctuation'
                     }
-                    // See rest below
+                    // 嵌套规则在下方补入。
                 }
             }
         }
@@ -42,6 +41,7 @@ highlight.languages.inform7 = {
         pattern: /(^|[^-])\b(?:after|before|carry out|check|continue the action|definition(?= *:)|do nothing|else|end (?:if|unless|the story)|every turn|if|include|instead(?: of)?|let|move|no|now|otherwise|repeat|report|resume the story|rule for|running through|say(?:ing)?|stop the action|test|try(?:ing)?|understand|unless|use|when|while|yes)\b(?!-)/i,
         lookbehind: true
     },
+    // 属性名由上下文限定，普通叙述文本不必全部变成关键词。
     'property': {
         pattern: /(^|[^-])\b(?:adjacent(?! to)|carried|closed|concealed|contained|dark|described|edible|empty|enclosed|enterable|even|female|fixed in place|full|handled|held|improper-named|incorporated|inedible|invisible|lighted|lit|lock(?:able|ed)|male|marked for listing|mentioned|negative|neuter|non-(?:empty|full|recurring)|odd|opaque|open(?:able)?|plural-named|portable|positive|privately-named|proper-named|provided|publically-named|pushable between rooms|recurring|related|rubbing|scenery|seen|singular-named|supported|swinging|switch(?:able|ed(?: on| off)?)|touch(?:able|ed)|transparent|unconcealed|undescribed|unlit|unlocked|unmarked for listing|unmentioned|unopenable|untouchable|unvisited|variable|visible|visited|wearable|worn)\b(?!-)/i,
         lookbehind: true,
@@ -61,7 +61,7 @@ highlight.languages.inform7 = {
 };
 
 insideGrammar(insideGrammar(highlight.languages.inform7!['string'])['substitution']).rest = cloneGrammar(highlight.languages.inform7);
-// We don't want the remaining text in the substitution to be highlighted as the string.
+// 替换式中剩余的文本使用普通文本标记。
 insideGrammar(insideGrammar(highlight.languages.inform7!['string'])['substitution']).rest!.text = {
     pattern: /\S(?:\s*\S)*/,
     alias: 'comment'

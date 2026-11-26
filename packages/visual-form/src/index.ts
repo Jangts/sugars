@@ -1,3 +1,10 @@
+/**
+ * `@sugars/visual-form` 的公开入口。
+ *
+ * 将字段定义同时编译成 DOM 控件与 Model 约束，在 JSON、控件和可选 textarea 之间同步。
+ * `VisualForm` 处理控件与 JSON 往返，导出的 `Model` 可独立使用字段约束与默认值。
+ */
+
 import { ViewModel } from '@sugars/simple-mvvm/view-model'
 import type { ViewModelState } from '@sugars/simple-mvvm/view-model'
 import { Model } from './model.js'
@@ -7,6 +14,7 @@ export { Model } from './model.js'
 export type { FormDataRecord, ModelField, ModelType } from './model.js'
 
 export type FieldValue = string | number | boolean
+/** 字段定义元组的第一个成员用于模型键和控件名称，后续成员按控件类型解释。 */
 export type FieldDefinition = readonly [name: string, control?: string, ...configuration: unknown[]]
 
 interface CompiledField {
@@ -31,6 +39,7 @@ const nativeTypes: Readonly<Record<string, string>> = {
 type FormDefinition = { fields: CompiledField[]; constraint: Model }
 
 // TangramJS src/form/VisualJOSN/ClassObject.js, declareModel.
+/** 同一字段定义同时生成控件配置和数据校验规则，让导入和导出使用同一套约束。 */
 function compile(definitions: readonly FieldDefinition[], name?: string): FormDefinition {
     const entries: [string, ModelField][] = []
     const fields: CompiledField[] = []
@@ -113,6 +122,12 @@ export class VisualForm {
     #controls: (HTMLInputElement | HTMLSelectElement)[] = []
     #classes: string[]
 
+    /**
+     * @param element - 调用方提供的控件容器。
+     * @param schema - 字段定义数组或其 JSON 文本。
+     * @param textarea - 可选的 JSON 输入输出后备字段。
+     * @throws 字段定义或初始 JSON 无法解析时传递错误。
+     */
     constructor(element: HTMLElement, schema: readonly FieldDefinition[] | string, textarea?: HTMLTextAreaElement) {
         this.Element = element
         const definitions = typeof schema === 'string' ? VisualForm.#schemas.get(schema) : schema
@@ -146,6 +161,12 @@ export class VisualForm {
         })
     }
 
+    /**
+     * 先以 textarea 当前值装载模型，成功后才接管其显示状态。
+     *
+     * @param textarea - 值为 JSON 文本的后备字段。
+     * @returns 当前表单。
+     */
     bindInput(textarea: HTMLTextAreaElement): this {
         this.loadJSON(textarea.value || '{}')
         if (this.textarea) this.textarea.style.display = this.#textareaDisplay
@@ -155,6 +176,14 @@ export class VisualForm {
         return this
     }
 
+    /**
+     * 解析对象并交给 Model 校验。JSON null 按空对象处理，数组和其他原始值会报错。
+     *
+     * @param json - 对象的 JSON 文本。
+     * @returns 已更新模型的当前表单。
+     * @throws {SyntaxError} JSON 文本不合法。
+     * @throws {TypeError} JSON 值不是对象或 null。
+     */
     loadJSON(json: string): this {
         const data: unknown = JSON.parse(json)
         if (data == null) return this.input({})
@@ -162,12 +191,22 @@ export class VisualForm {
         return this.input(data as FormDataRecord)
     }
 
+    /**
+     * 按模型约束导入字段。无效字段沿用原记录。
+     * @param data - 以字段名为键的输入。
+     * @returns 当前表单。
+     */
     input(data: FormDataRecord): this {
         const row = this.model.constraint.update(this.$ID, data)
         if (row) this.#view.row = row
         return this
     }
 
+    /**
+     * 读取当前控件并写回模型，最终以模型接受的字段值为准。
+     *
+     * @returns 模型接受的最新字段值。
+     */
     output(): FormDataRecord {
         const data = Object.fromEntries(this.model.fields.map((field, i) => {
             return [field.name, controlValue(this.#controls[i]!, field)]
@@ -175,12 +214,18 @@ export class VisualForm {
         return this.model.constraint.update(this.$ID, data) ?? {}
     }
 
+    /**
+     * 取当前控件的校验结果并序列化，同时同步已绑定的 textarea。
+     *
+     * @returns 由当前模型记录得到的 JSON 字符串。
+     */
     getJSON(): string {
         const json = JSON.stringify(this.output())
         if (this.textarea) this.textarea.value = json
         return json
     }
 
+    /** 移除实例创建的控件与订阅，并恢复 textarea 原先的显示方式。 */
     destroy(): void {
         this.#view.destroy()
         if (this.textarea) this.textarea.style.display = this.#textareaDisplay

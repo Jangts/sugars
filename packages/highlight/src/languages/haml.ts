@@ -1,17 +1,16 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `haml` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 区分 Haml 缩进块、标记及脚本，并为过滤器选择嵌套词法。
  */
+
 import { highlighter as highlight } from '../core.js'
 import type { Grammar } from '../grammar.js'
 
 var handlebars_pattern = /\{\{\{[\w\W]+?\}\}\}|\{\{[\w\W]+?\}\}/g;
 
 highlight.languages.haml = {
-    // Multiline stuff should appear before the rest
+    // 多行结构须先于普通规则匹配。
 
     'multiline-comment': {
         pattern: /((?:^|\r?\n|\r)([\t ]*))(?:\/|-#).*((?:\r?\n|\r)\2[\t ]+.+)*/,
@@ -35,7 +34,8 @@ highlight.languages.haml = {
         }
     ],
 
-    // See at the end of the file for known filters
+    // 支持的过滤器在文件末尾登记。
+    // 先用缩进划定过滤块范围，再由底部登记的过滤器规则决定内容用哪门语言处理。
     'filter': {
         pattern: /((?:^|\r?\n|\r)([\t ]*)):[\w-]+((?:\r?\n|\r)(?:\2[\t ]+.+|\s*?(?=\r?\n|\r)))+/,
         lookbehind: true,
@@ -59,13 +59,13 @@ highlight.languages.haml = {
         lookbehind: true
     },
     'tag': {
-        // Allows for one nested group of braces
+        // 允许一层内嵌花括号。
         pattern: /((?:^|\r?\n|\r)[\t ]*)[%.#][\w\-#.]*[\w\-](?:\([^)]+\)|\{(?:\{[^}]+\}|[^}])+\}|\[[^\]]+\])*[\/<>]*/,
         lookbehind: true,
         inside: {
             'attributes': [{
-                    // Lookbehind tries to prevent interpolations for breaking it all
-                    // Allows for one nested group of braces
+                    // 后顾用于避开会截断外层插值的匹配。
+                    // 允许一层内嵌花括号。
                     pattern: /(^|[^#])\{(?:\{[^}]+\}|[^}])+\}/,
                     lookbehind: true,
                     inside: {
@@ -100,7 +100,7 @@ highlight.languages.haml = {
             rest: highlight.languages.ruby
         }
     },
-    // Interpolations in plain text
+    // 纯文本中的插值。
     'interpolation': {
         pattern: /#\{[^}]+\}/,
         inside: {
@@ -119,7 +119,7 @@ highlight.languages.haml = {
 
 var filter_pattern = '((?:^|\\r?\\n|\\r)([\\t ]*)):{{filter_name}}((?:\\r?\\n|\\r)(?:\\2[\\t ]+.+|\\s*?(?=\\r?\\n|\\r)))+';
 
-// Non exhaustive list of available filters and associated languages
+// 登记已支持的过滤器和对应词法。
 var filters = [
     'css',
     { filter: 'coffee', language: 'coffeescript' },

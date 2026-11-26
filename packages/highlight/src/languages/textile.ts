@@ -1,15 +1,13 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `textile` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 处理 Textile 的块与内联标记，包括链接、图片、脚注和样式修饰。
  */
+
 import { highlighter as highlight } from '../core.js'
 import { cloneGrammar, grammarPattern, insideGrammar } from '../grammar.js'
 
-// We don't allow for pipes inside parentheses
-// to not break table pattern |(. foo |). bar |
+// 括号中排除竖线，以免吞掉表格分隔符，例如 |(. foo |). bar |。
 var modifierRegex = '(?:\\([^|)]+\\)|\\[[^\\]]+\\]|\\{[^}]+\\})+';
 var modifierTokens = {
     'css': {
@@ -28,18 +26,19 @@ var modifierTokens = {
         lookbehind: true,
         alias: 'attr-value'
     },
-    // Anything else is punctuation (the first pattern is for row/col spans inside tables)
+    // 其余记号按标点处理，首条规则覆盖表格的跨行、跨列标记。
     'punctuation': /[\\\/]\d+|\S/
 };
 
 
 highlight.languages.textile = highlight.languages.extend('markup', {
+    // 短语的定界符既可能是样式开关也可能是正文标点，保留前后边界可限制匹配范围。
     'phrase': {
         pattern: /(^|\r|\n)\S[\s\S]*?(?=$|\r?\n\r?\n|\r\r)/,
         lookbehind: true,
         inside: {
 
-            // h1. Header 1
+            // 一级标题，例如 h1. Header 1
             'block-tag': {
                 pattern: RegExp('^[a-z]\\w*(?:' + modifierRegex + '|[<>=()])*\\.'),
                 inside: {
@@ -69,13 +68,12 @@ highlight.languages.textile = highlight.languages.extend('markup', {
 
             // | cell | cell | cell |
             'table': {
-                // Modifiers can be applied to the row: {color:red}.|1|2|3|
-                // or the cell: |{color:red}.1|2|3|
+                // 修饰可用于行，例如 {color:red}.|1|2|3|。
+                // 也可用于单元格，例如 |{color:red}.1|2|3|。
                 pattern: RegExp('^(?:(?:' + modifierRegex + '|[<>=()^~])+\\.\\s*)?(?:\\|(?:(?:' + modifierRegex + '|[<>=()^~_]|[\\\\/]\\d+)+\\.)?[^|]*)+\\|', 'm'),
                 inside: {
                     'modifier': {
-                        // Modifiers for rows after the first one are
-                        // preceded by a pipe and a line feed
+                        // 首行之后的行修饰前面是竖线与换行。
                         pattern: RegExp('(^|\\|(?:\\r?\\n|\\r)?)(?:' + modifierRegex + '|[<>=()^~_]|[\\\\/]\\d+)+(?=\\.)'),
                         lookbehind: true,
                         inside: cloneGrammar(modifierTokens)
@@ -87,7 +85,7 @@ highlight.languages.textile = highlight.languages.extend('markup', {
             'inline': {
                 pattern: RegExp('(\\*\\*|__|\\?\\?|[*_%@+\\-^~])(?:' + modifierRegex + ')?.+?\\1'),
                 inside: {
-                    // Note: superscripts and subscripts are not handled specifically
+                    // 此处没有单独匹配上标和下标。
 
                     // *bold*, **bold**
                     'bold': {
@@ -203,7 +201,7 @@ highlight.languages.textile = highlight.languages.extend('markup', {
                 }
             },
 
-            // Footnote[1]
+            // 脚注引用，例如 Footnote[1]
             'footnote': {
                 pattern: /\b\[\d+\]/,
                 alias: 'comment',
@@ -212,7 +210,7 @@ highlight.languages.textile = highlight.languages.extend('markup', {
                 }
             },
 
-            // CSS(Cascading Style Sheet)
+            // 样式表名称或缩写。
             'acronym': {
                 pattern: /\b[A-Z\d]+\([^)]+\)/,
                 inside: {
@@ -224,7 +222,7 @@ highlight.languages.textile = highlight.languages.extend('markup', {
                 }
             },
 
-            // highlight(C)
+            // 括号中的语言名指定高亮词法，例如 highlight(C)。
             'mark': {
                 pattern: /\b\((TM|R|C)\)/,
                 alias: 'comment',
@@ -245,14 +243,14 @@ var nestedPatterns = {
     'mark': cloneGrammar(insideGrammar(highlight.languages.textile!['phrase'])['mark'])
 };
 
-// Allow some nesting
+// 支持有限嵌套。
 grammarPattern(insideGrammar(insideGrammar(highlight.languages.textile!['phrase'])['inline'])['bold']).inside = nestedPatterns;
 grammarPattern(insideGrammar(insideGrammar(highlight.languages.textile!['phrase'])['inline'])['italic']).inside = nestedPatterns;
 grammarPattern(insideGrammar(insideGrammar(highlight.languages.textile!['phrase'])['inline'])['inserted']).inside = nestedPatterns;
 grammarPattern(insideGrammar(insideGrammar(highlight.languages.textile!['phrase'])['inline'])['deleted']).inside = nestedPatterns;
 grammarPattern(insideGrammar(insideGrammar(highlight.languages.textile!['phrase'])['inline'])['span']).inside = nestedPatterns;
 
-// Allow some styles inside table cells
+// 单元格内容允许部分行内样式。
 insideGrammar(insideGrammar(highlight.languages.textile!['phrase'])['table'])['inline'] = nestedPatterns['inline'];
 insideGrammar(insideGrammar(highlight.languages.textile!['phrase'])['table'])['link'] = nestedPatterns['link'];
 insideGrammar(insideGrammar(highlight.languages.textile!['phrase'])['table'])['image'] = nestedPatterns['image'];

@@ -1,3 +1,5 @@
+/* 维护一个图表区域的坐标变换、绘图范围和画笔生命周期。 */
+
 import type { KLine } from '../index.js'
 import type { Canvas } from '../Canvas.js'
 import type { Indicator, IndicatorValues } from '../indicators/Indicator.js'

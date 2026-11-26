@@ -1,5 +1,7 @@
 /*! Ported from TangramJS painter/Charts/util/helpers.js. */
 
+/* 将图表配置换算为绘图区、刻度和坐标，供直角坐标、极坐标与扇区共用。 */
+
 import { minNumber, maxNumber } from "../series-data.js"
 
 type XY = { x: number; y: number }
@@ -146,14 +148,14 @@ export function calculateScaleRange(valuesArray: number[], drawingSize: number, 
       if (numberOfSteps > maxSteps) {
           stepValue *= 2;
           numberOfSteps = Math.round(graphRange / stepValue);
-          // Don't ever deal with a decimal number of steps - cancel fitting and just use the minimum number of steps.
+          // 刻度步数须为整数。无法配平时回退到最少步数。
           if (numberOfSteps % 1 !== 0) {
               skipFitting = true;
           }
       } else {
-          //If user has declared ints only, and the step value isn't a decimal
+          // 对整数值域先考虑整数步长。
           if (integersOnly && rangeOrderOfMagnitude >= 0) {
-              //If the user has said integers only, we need to check that making the scale more granular wouldn't make it a float
+              // 只有缩小后仍是整数步长时才增加刻度密度。
               if (stepValue / 2 % 1 === 0) {
                   stepValue /= 2;
                   numberOfSteps = Math.round(graphRange / stepValue);
@@ -200,7 +202,7 @@ export function getAngleFromPoint(centrePoint: XY, anglePoint: XY) {
 
   var angle = Math.PI * 2 + Math.atan2(distanceFromYCenter, distanceFromXCenter);
 
-  //If the segment is in the top left quadrant, we need to add another rotation to the angle
+  // 左上象限的角度需要补一周，使角度顺着绘制方向连续。
   if (distanceFromXCenter < 0 && distanceFromYCenter < 0) {
       angle += Math.PI * 2;
   }
@@ -215,7 +217,7 @@ export function splineCurve(FirstPoint: XY, MiddlePoint: XY, AfterPoint: XY, t: 
   var d01 = Math.sqrt(Math.pow(MiddlePoint.x - FirstPoint.x, 2) + Math.pow(MiddlePoint.y - FirstPoint.y, 2)),
       d12 = Math.sqrt(Math.pow(AfterPoint.x - MiddlePoint.x, 2) + Math.pow(AfterPoint.y - MiddlePoint.y, 2)),
       fa = t * d01 / (d01 + d12 || 1),
-      // scaling factor for triangle Ta
+      // 用相邻折线段的长度比例缩放曲线控制点。
       fb = t * d12 / (d01 + d12 || 1);
   return {
       inner: {

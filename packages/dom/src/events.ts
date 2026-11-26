@@ -1,3 +1,5 @@
+/* 在原生事件之上实现选择器委托、事件命名空间和处理器管理，同时支持普通对象上的手动触发。 */
+
 import type { RuntimeCollection, SelectionValue } from './runtime-types.js'
 import type { EventMap, Handler } from './index.js'
 import { isElement, isWindow, query } from './selection.js'
@@ -33,6 +35,7 @@ const nativeType = (type: string, selector?: string | null) => Object.hasOwn(kno
     : selector && Object.hasOwn(focusAliases, type) ? focusAliases[type]! : type
 const includesNamespace = (namespaces: string[], requested: string[]) => requested.every(name => namespaces.includes(name))
 
+/** 包装原生事件和自定义触发参数，记录处理结果与传播停止状态。 */
 export class DomEvent {
     #defaultPrevented = false
     #propagationStopped = false
@@ -112,6 +115,7 @@ for (const name of ('altKey bubbles button buttons cancelable changedTouches cli
     })
 }
 
+/** 先排入事件目标到绑定节点路径上的委托处理器，再排入直接绑定的处理器。 */
 function dispatch(target: SelectionValue, records: EventRegistration[], event: DomEvent,
     extra: unknown[], requested: string[] = [], logicalType?: string) {
     const matching = records.filter(record =>
@@ -119,6 +123,7 @@ function dispatch(target: SelectionValue, records: EventRegistration[], event: D
     const delegated = matching.filter(record => record.selector)
     const queue: [SelectionValue, EventRegistration[]][] = []
     const selects = new Map<string, Set<HTMLElement>>()
+    // 委托路径按从目标向绑定节点的顺序建立，选择器结果在本次派发中复用。
     if (delegated.length && event.target !== target) {
         for (let node = event.target; node && node !== target; node = node.parentNode) {
             if (!isElement(node) || event.type === 'click' && (node as HTMLButtonElement).disabled) continue
@@ -139,6 +144,7 @@ function dispatch(target: SelectionValue, records: EventRegistration[], event: D
             if (event.isImmediatePropagationStopped()) break
             if (Object.hasOwn(knownAliases, record.type) && event.relatedTarget &&
                 (event.relatedTarget === current || current.contains?.(event.relatedTarget))) continue
+            // 先标记并解除一次性注册，处理器内部再触发同名事件时不会被重复调用。
             if (record.once) {
                 if (record.fired) continue
                 record.fired = true

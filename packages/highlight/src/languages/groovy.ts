@@ -1,10 +1,9 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `groovy` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 识别 Groovy 注解、字符串插值与 Spock 测试块标签。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 highlight.languages.groovy = highlight.languages.extend('clike', {
@@ -30,6 +29,7 @@ highlight.languages.insertBefore('groovy', 'punctuation', {
 });
 
 highlight.languages.insertBefore('groovy', 'function', {
+    // 注解和测试标签有独立规则，使普通关键字匹配不会承担测试 DSL 的标记职责。
     'annotation': {
         alias: 'punctuation',
         pattern: /(^|[^.])@\w+/,
@@ -37,7 +37,7 @@ highlight.languages.insertBefore('groovy', 'function', {
     }
 });
 
-// Handle string interpolation
+// 处理字符串插值。
 highlight.hooks.add('wrap', function(env) {
     if (env.language === 'groovy' && env.type === 'string') {
         var delimiter = env.content[0];
@@ -48,7 +48,7 @@ highlight.hooks.add('wrap', function(env) {
                 pattern = /([^\$])(\$(\{.*?\}|[\w\.]+))/;
             }
 
-            // To prevent double HTML-ecoding we have to decode env.content first
+            // 先还原 env.content，再进入序列化，避免双重 HTML 转义。
             env.content = env.content.replace(/&amp;/g, '&').replace(/&lt;/g, '<');
 
             env.content = highlight.highlight(env.content, {

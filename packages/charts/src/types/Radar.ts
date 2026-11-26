@@ -1,4 +1,7 @@
 /*! Ported from TangramJS painter/Charts/types/Radar.js. */
+
+/* 按照雷达轴和值域计算各指标点的位置，组织闭合路径、区域填充及点的交互。 */
+
 import type { RadarSeries as RadarOptions, Paint } from '../types.js'
 import { SeriesRenderer, type ResolvedSeries } from './Abstract.js'
 import { Line } from '../components/sharps/Line.js'

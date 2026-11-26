@@ -1,13 +1,13 @@
-/*!
- * tangram.js framework source code
+/**
+ * `@sugars/highlight` 内置的 `yaml` 词法。
  *
- * static see.highlight.language
- *
- * Date: 2017-04-06
+ * 优先识别 YAML 块标量，并区分键、指令和数据字面量。
  */
+
 import { highlighter as highlight } from '../core.js'
 
 highlight.languages.yaml = {
+    // 块标量要先依据缩进收成一段字符串，否则内部的冒号、井号会被误当成 YAML 键或注释。
     'scalar': {
         pattern: /([\-:]\s*(![^\s]+)?[ \t]*[|>])[ \t]*(?:((?:\r?\n|\r)[ \t]+)[^\r\n]+(?:\3[^\r\n]+)*)/,
         lookbehind: true,

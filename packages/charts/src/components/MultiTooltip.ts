@@ -1,4 +1,7 @@
 /*! Ported from TangramJS painter/Charts/components/MultiTooltip.js. */
+
+/* 绘制同一轴位置的多系列提示。统一测量标题和标签，再安排图例及画布边缘的避让。 */
+
 import { ChartElement } from './Abstract.js'
 import { maxNumber } from '../series-data.js'
 import { fontString } from '../util/canvas.js'
@@ -18,7 +21,7 @@ export class MultiTooltip extends ChartElement {
             this.ctx.font = this.titleFont;
 
             var titleWidth = this.ctx.measureText(this.title).width,
-                //Label has a legend square as well so account for this.
+                // 标签宽度还需计入图例色块。
                 labelWidth = longestText(this.ctx, this.font, this.labels) + this.fontSize + 3,
                 longestTextWidth = maxNumber([labelWidth, titleWidth]);
 
@@ -26,14 +29,14 @@ export class MultiTooltip extends ChartElement {
 
             var halfHeight = this.height / 2;
 
-            //Check to ensure the height will fit on the canvas
+            // 调整纵向位置，使提示框落在画布范围内。
             if (this.y - halfHeight < 0) {
                 this.y = halfHeight;
             } else if (this.y + halfHeight > this.chart.height) {
                 this.y = this.chart.height - halfHeight;
             }
 
-            //Decide whether to align left or right based on position on canvas
+            // 依据数据点在画布的左右位置选择展开方向。
             if (this.x > this.chart.width / 2) {
                 this.x -= this.xOffset + this.width;
             } else {
@@ -44,7 +47,7 @@ export class MultiTooltip extends ChartElement {
             var baseLineHeight = this.y - (this.height / 2) + this.yPadding,
                 afterTitleIndex = index - 1;
 
-            //If the index is zero, we're getting the title
+            // 行索引 0 用于标题，后续行按正文行高排列。
             if (index === 0) {
                 return baseLineHeight + this.titleHeight / 3;
             } else {

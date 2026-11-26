@@ -1,3 +1,5 @@
+/* 提供组合表达式使用的求值骨架，把索引传给各个操作数。 */
+
 import type { DataProvider } from '../DataProvider.js'
 import { Expression } from './Expression.js'
 import type { IndicatorExpression } from './IndicatorExpression.js'

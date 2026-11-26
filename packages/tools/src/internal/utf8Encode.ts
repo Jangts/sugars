@@ -1,5 +1,7 @@
 // TangramJS str/str.js:20
 
+/* 把字符串的 UTF-16 代码单元转换为旧 Base64 实现所需的字节字符串。 */
+
 export default function utf8Encode(string: string) {
     string = string.replace(/\r\n/g, "\n");
     var utftext = "";

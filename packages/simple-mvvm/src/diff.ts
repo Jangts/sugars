@@ -1,3 +1,5 @@
+/* 按旧虚拟树的先序节点编号产生补丁。子列表先对齐身份，再比较内容并记录重排。 */
+
 import { listDiff } from './list-diff.js'
 import { PROPS, REORDER, REPLACE, TEXT, skipPatchChildren } from './patch.js'
 import type { PatchOperation, Patches } from './patch.js'
@@ -31,7 +33,7 @@ function diffChildren(oldNode: VElement, newNode: VElement, index: number, patch
 
 function dfsWalk(oldNode: VNode, newNode: VNode | null, index: number, patches: Patches): void {
     if (newNode === null) {
-        // Parent reordering removes the node, including any externally managed children.
+        // 父节点的重排操作会删除整个子树，包括由外部管理的子节点。
         if (typeof oldNode !== 'string') skipPatchChildren(patches, index, oldNode.count)
         return
     }
@@ -58,6 +60,13 @@ function dfsWalk(oldNode: VNode, newNode: VNode | null, index: number, patches: 
     if (currentPatch.length) patches[index] = currentPatch
 }
 
+/**
+ * 补丁索引沿用旧树顺序。应用补丁时须从旧树对应的真实根节点开始。
+ *
+ * @param oldTree - 当前真实 DOM 对应的旧虚拟树。
+ * @param newTree - 期望渲染的新虚拟树。
+ * @returns 按旧树节点编号分组的补丁。
+ */
 export function diff(oldTree: VNode, newTree: VNode): Patches {
     const patches: Patches = {}
     dfsWalk(oldTree, newTree, 0, patches)

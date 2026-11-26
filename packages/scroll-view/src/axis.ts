@@ -1,3 +1,5 @@
+/* 将横纵轴的原生尺寸、滚动值和指针坐标统一成滑块控制器使用的量，横轴兼顾 RTL。 */
+
 const axes = {
     vertical: { size: 'clientHeight', extent: 'scrollHeight', offset: 'scrollTop', coordinate: 'clientY', edge: 'top', border: 'clientTop' },
     horizontal: { size: 'clientWidth', extent: 'scrollWidth', offset: 'scrollLeft', coordinate: 'clientX', edge: 'left', border: 'clientLeft' },
@@ -5,6 +7,7 @@ const axes = {
 
 export type Axis = keyof typeof axes
 
+/** 统一返回从视觉起点递增的偏移。横向 RTL 的原生负 scrollLeft 在此换算。 */
 export function readAxis(viewport: HTMLElement, axis: Axis) {
     const dimensions = axes[axis]
     const viewportSize = viewport[dimensions.size]

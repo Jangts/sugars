@@ -1,4 +1,12 @@
 /*! Ported from TangramJS painter/Charts/Charts.js. */
+
+/**
+ * `@sugars/charts` 的公开入口。
+ *
+ * 图表实例负责组合比例尺和系列、持有 Canvas 图层、安排动画及管理销毁。
+ * `Charts` 负责系列与图层生命周期，`createChart` 复用同一构造过程，公开选项来自 `types.ts`。
+ */
+
 import { defaults } from './defaults.js'
 import { mergeOptions } from './series-data.js'
 import { buildGrid } from './modules/grid.js'
@@ -84,6 +92,13 @@ export class Charts {
         if (initial) this.setOption(initial)
     }
 
+    /**
+     * 按属性合并配置，省略值沿用当前选项，series 传空数组可清空系列。
+     *
+     * @param options - 按字段合并的图表配置及新系列。
+     * @returns 完成重新装配的当前实例。
+     * @throws 实例已销毁或包含未知系列类型。
+     */
     setOption(options: ChartOptions = {}): this {
         this.assertActive()
         this.options = mergeOptions(this.options, options)
@@ -97,6 +112,13 @@ export class Charts {
         return this.build()
     }
 
+    /**
+     * 按系列重新装配比例尺和图形。由本次构建实际使用的层号决定哪些 Canvas 留在容器中。
+     *
+     * @param animaless - true 时直接绘制，默认按当前动画配置渲染。
+     * @returns 当前图表。
+     * @throws 已销毁或系列配置无法装配。
+     */
     build(animaless = false): this {
         this.assertActive()
         this.stop()
@@ -106,6 +128,7 @@ export class Charts {
         this.historyCharts = Object.create(null)
         this.hoverHandlers.length = 0
         this.grid = this.polar = this.radarpolar = null
+        // 各系列装配期间通过 getLayer 记录实际用到的层。构建结束后据此回收旧层，保留仍共享的层。
         const usedLayers = this.buildLayers = new Set<number>()
         try {
             if (this.series.bar || this.series.line || this.series.scatter) this.buildGrid()
@@ -134,6 +157,13 @@ export class Charts {
 
     private buildLayers?: Set<number>
 
+    /**
+     * 按层号取得或创建 Canvas。同一层号共用一个表面，实例释放后不能再申请图层。
+     *
+     * @param zIndex - 层级编号，默认 0。
+     * @returns 属于当前实例的 Canvas 图层。
+     * @throws 图表已经销毁。
+     */
     getLayer(zIndex = 0): HTMLCanvasElement {
         this.assertActive()
         this.buildLayers?.add(zIndex)
@@ -148,6 +178,11 @@ export class Charts {
         return canvas
     }
 
+    /**
+     * @param zIndex - 获取上下文的图层编号。
+     * @returns 对应图层的 Canvas 2D 上下文。
+     * @throws 图表已销毁或环境未提供 2D 上下文。
+     */
     getContext(zIndex = 0): CanvasRenderingContext2D {
         const context = this.getLayer(zIndex).getContext('2d')
         if (!context) throw new Error('A Canvas 2D context is unavailable')
@@ -159,6 +194,10 @@ export class Charts {
         return this
     }
 
+    /**
+     * 清空所有已建图层，保留各图层当前的逻辑坐标变换。
+     * @returns 当前图表。
+     */
     clear(): this {
         for (const [zIndex, canvas] of this.layers) {
             const ctx = this.getContext(zIndex)
@@ -170,6 +209,10 @@ export class Charts {
         return this
     }
 
+    /**
+     * 取消尚未执行的动画帧。
+     * @returns 可继续调用的当前图表。
+     */
     stop(): this {
         if (this.animationFrame !== undefined) {
             this.window.cancelAnimationFrame(this.animationFrame)
@@ -178,6 +221,11 @@ export class Charts {
         return this
     }
 
+    /**
+     * 从当前配置开始一次绘制。更新或销毁后旧动画不再推进。减弱动态效果时直接画到末态。
+     *
+     * @returns 已启动绘制的当前图表。
+     */
     render(): this {
         this.stop()
         const options = this.options
@@ -207,6 +255,10 @@ export class Charts {
         return this
     }
 
+    /**
+     * @param ease - 当前帧从起点到最终绘制状态的进度，默认最终状态。
+     * @returns 当前图表。
+     */
     draw(ease = 1): this {
         this.clear()
         this.grid?.draw()
