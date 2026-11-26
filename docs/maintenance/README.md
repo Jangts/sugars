@@ -4,6 +4,7 @@
 
 | 资料 | 内容 |
 | --- | --- |
+| [双语文档站部署](docs-site-deployment.md) | Jangts Pages 目标、发布范围和公网验证 |
 | [迁移背景与共识](project-background.md) | 项目由来、范围、移植原则、包关系及历史验证 |
 | [TangramJS 移植说明](tangramjs-migration.md) | 源模块对应位置、留下的接口以及已知行为差异 |
 | [代码高亮移植与验收](highlight-migration.md) | 原接口、语言规则修复、主题及验证范围 |

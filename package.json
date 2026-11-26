@@ -4,11 +4,16 @@
   "private": true,
   "description": "Independent editor, syntax highlighting, and chart libraries.",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "apps/docs"
   ],
   "scripts": {
     "build": "tsc -b && node -e \"require('node:fs').cpSync('packages/editor/src/emoticons', 'packages/editor/dist/emoticons', { recursive: true })\"",
-    "typecheck": "tsc -b --pretty false"
+    "typecheck": "tsc -b --pretty false",
+    "docs:dev": "npm run build && npm run dev --workspace @sugars/docs",
+    "docs:build": "npm run build && npm run build --workspace @sugars/docs",
+    "docs:preview": "npm run preview --workspace @sugars/docs",
+    "docs:check": "npm run docs:build && npm run check --workspace @sugars/docs"
   },
   "devDependencies": {
     "typescript": "7.0.2"

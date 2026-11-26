@@ -6,3 +6,7 @@ coverage/
 .env
 .env.*
 !.env.example
+
+# Sugars documentation build inputs and cache
+/apps/docs/.generated/
+/apps/docs/.vitepress/cache/

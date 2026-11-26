@@ -6,6 +6,7 @@
 
 | 变化 | 实际入口 | 证据范围 |
 | --- | --- | --- |
+| 双语文档站 | `npm run docs:check` | 公开包、API、示例、双语路由、锚点、资源与静态产物 |
 | TypeScript 构建与声明 | `npm run typecheck` 或 `npm run build` | 当前编译配置下的类型、项目引用及导出。完整构建复制默认表情 |
 | 编辑器 | [原生编辑器示例](../README.md#原生编辑器) | 实际浏览器中的选区、命令、内容、表单和清理 |
 | Web Component | [Web Component 示例](../README.md#web-component) | 实际注册、Light DOM、属性、事件及重连 |

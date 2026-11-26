@@ -1,6 +1,6 @@
 # 项目协作约定
 
-本仓库使用 npm workspaces 管理 `packages/*`。在根目录安装和构建，使用根 `package-lock.json`。保留已有工作区和暂存区改动。
+本仓库使用 npm workspaces 管理 `packages/*` 和 `apps/docs`。在根目录安装和构建，使用根 `package-lock.json`。保留已有工作区和暂存区改动。
 
 从 [项目文档](docs/README.md) 进入。接口、代码组织和文档遵守本项目规范。全面检查、专项检查和修复复查使用全局 `$comprehensive-code-review`，自动读取 [项目检查入口](docs/review-entrypoints.md)。历史背景、迁移对照及验证证据归位于 [维护资料](docs/maintenance/README.md)。
 

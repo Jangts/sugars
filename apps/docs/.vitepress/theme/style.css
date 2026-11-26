@@ -1,0 +1,29 @@
+:root {
+    --vp-c-brand-1: #a02f50;
+    --vp-c-brand-2: #b83b5d;
+    --vp-c-brand-3: #92293f;
+    --vp-c-brand-soft: rgba(160, 47, 80, 0.12);
+}
+
+.dark {
+    --vp-c-brand-1: #f59bb2;
+    --vp-c-brand-2: #ef819e;
+    --vp-c-brand-3: #c95379;
+    --vp-c-brand-soft: rgba(239, 129, 158, 0.16);
+}
+
+.VPNavBar .VPNavBarTranslations,
+.VPNavScreen .VPNavScreenTranslations {
+    display: none;
+}
+
+.sugars-language {
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 0.625rem;
+    white-space: nowrap;
+}
+
+.sugars-language:hover {
+    color: var(--vp-c-brand-1);
+}

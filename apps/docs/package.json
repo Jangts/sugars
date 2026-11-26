@@ -1,0 +1,19 @@
+{
+  "name": "@sugars/docs",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate": "node scripts/generate.mjs",
+    "build": "npm run generate && vitepress build",
+    "dev": "npm run generate && vitepress dev --host 127.0.0.1",
+    "preview": "vitepress preview --host 127.0.0.1",
+    "check": "node scripts/check.mjs"
+  },
+  "devDependencies": {
+    "cheerio": "1.1.2",
+    "typescript": "7.0.2",
+    "vitepress": "1.6.4",
+    "vue": "^3.5.0"
+  }
+}
