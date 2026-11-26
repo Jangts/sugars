@@ -4,6 +4,9 @@ import { languageOf, languageRedirect, languageRoute, locales } from '../scripts
 
 type Locale = (typeof locales)[number]
 
+const icon = '/branding/sugars-logo.png'
+const logo = '/branding/sugars-lockup.svg'
+
 function searchTerms(input: string): string[] {
     const chunks = input.toLowerCase().match(/\p{Script=Han}+|[a-z\d]+/gu) ?? []
     return chunks.flatMap(chunk => {
@@ -55,7 +58,10 @@ export default defineConfig({
     srcDir: '.generated',
     outDir: 'dist',
     base,
-    head: [['script', {}, languageRedirect(base)]],
+    head: [
+        ['script', {}, languageRedirect(base)],
+        ['link', { rel: 'icon', type: 'image/png', href: base + icon.slice(1) }],
+    ],
     locales: Object.fromEntries(locales.map(locale => [
         locale, {
             label: locale === 'zh' ? '简体中文' : 'English',
@@ -79,7 +85,8 @@ export default defineConfig({
         ]
     },
     themeConfig: {
-        siteTitle: 'Sugars',
+        logo: { src: logo, alt: 'Sugars' },
+        siteTitle: false,
         footer: { message: 'Sugars' },
         search: {
             provider: 'local',

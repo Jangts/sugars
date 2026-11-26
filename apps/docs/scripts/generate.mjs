@@ -129,6 +129,7 @@ function home(locale) {
     return [
         '---', 'layout: home', 'hero:', '  name: Sugars',
         `  text: ${JSON.stringify(t.description)}`,
+        '  image:', '    src: /branding/sugars-logo-rendered.png', '    alt: ""',
         '  actions:', '    - theme: brand', `      text: ${t.start}`, `      link: /${locale}/getting-started`,
         '    - theme: alt', `      text: ${t.packages}`, `      link: /${locale}/packages/`,
         'features:', ...groups.flatMap(group => [
@@ -155,6 +156,9 @@ const api = await collectApi()
 const categories = matchTools(api.get('tools'))
 
 await rm(generated, { recursive: true, force: true })
+const branding = path.join(generated, 'public', 'branding')
+await cp(path.join(site, 'assets'), branding, { recursive: true })
+await cp(path.join(site, 'design', 'sugars-logo-rendered.png'), path.join(branding, 'sugars-logo-rendered.png'))
 await Promise.all(packages.map(copyNotices))
 await write('index.md', `---\nlayout: page\n---\n\n# Sugars\n\n[简体中文](/zh/) · [English](/en/)\n`)
 for (const locale of locales) {
