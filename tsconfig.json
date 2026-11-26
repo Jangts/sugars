@@ -30,6 +30,24 @@
     },
     {
       "path": "packages/tools"
+    },
+    {
+      "path": "packages/simple-mvvm"
+    },
+    {
+      "path": "packages/swiper"
+    },
+    {
+      "path": "packages/visual-form"
+    },
+    {
+      "path": "packages/simple-sql"
+    },
+    {
+      "path": "packages/3d-pictures"
+    },
+    {
+      "path": "packages/dom"
     }
   ]
 }

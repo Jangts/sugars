@@ -7,6 +7,8 @@ export interface AmdPackage {
 export interface AmdConfig {
     baseUrl?: string
     mainUrl?: string
+    /** Maximum wait for an individual script after it starts loading. */
+    timeoutMs?: number
     paths?: Readonly<Record<string, string>>
     packages?: readonly (AmdPackage | string)[]
 }

@@ -40,7 +40,7 @@ export class MultiTooltip extends ChartElement {
                 this.x += this.xOffset;
             }
         }
-    getLineHeight(index) {
+    getLineHeight(index: number) {
             var baseLineHeight = this.y - (this.height / 2) + this.yPadding,
                 afterTitleIndex = index - 1;
 

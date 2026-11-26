@@ -92,6 +92,7 @@ export class SimpleEditor {
         })
         this.initial = this.richareas.map(area => area.innerHTML)
         this.current = [...this.initial]
+        this.syncFields()
         this.selection = new EditorSelection(this.richareas)
         this.readOnly = options.readOnly ?? false
         this.listen(document)
@@ -102,11 +103,14 @@ export class SimpleEditor {
     set html(value: string) { this.setValue(value) }
     get readOnly(): boolean { return this.readonlyState }
     set readOnly(value: boolean) {
+        if (this.controller.signal.aborted) return
         this.readonlyState = value
         for (const area of this.richareas) area.contentEditable = String(!value)
     }
 
-    focus(index = 0): void { this.selection.createEmptyRange(index) }
+    focus(index = 0): void {
+        if (!this.controller.signal.aborted) this.selection.createEmptyRange(index)
+    }
 
     execCommand<K extends EditorCommand>(command: K, ...args: undefined extends CommandValues[K]
         ? [value?: CommandValues[K]] : [value: CommandValues[K]]): this
@@ -148,6 +152,7 @@ export class SimpleEditor {
     }
 
     resetValue(): this {
+        if (this.controller.signal.aborted) return this
         this.initial.forEach((html, index) => {
             const area = this.richareas[index]
             if (area) this.replaceHTML(area, html)
@@ -159,7 +164,9 @@ export class SimpleEditor {
     getContentTxt(index = 0): string { return this.richareas[index]?.textContent ?? '' }
     getText(_index = 0): string { return this.selection.getSelectionText() }
     inForm(form: Element): boolean { return this.richareas.some(area => form.contains(area)) }
-    collapse(toStart = false): void { this.selection.collapseRange(toStart) }
+    collapse(toStart = false): void {
+        if (!this.controller.signal.aborted) this.selection.collapseRange(toStart)
+    }
 
     insertHTM(value: string): this { return this.execCommand('insert', value) }
     createLink(value: CommandValues['createlink']): this { return this.execCommand('createlink', value) }
@@ -192,6 +199,7 @@ export class SimpleEditor {
     }
 
     onchange(source: EditorChange['source'] = 'input'): this {
+        if (this.controller.signal.aborted) return this
         this.syncFields()
         this.richareas.forEach((area, index) => {
             const html = area.innerHTML
@@ -290,6 +298,7 @@ export class SimpleEditor {
     }
 
     private syncFields(): void {
+        if (this.controller.signal.aborted) return
         this.textareas.forEach((field, index) => {
             field.value = this.richareas[index]?.innerHTML ?? ''
         })

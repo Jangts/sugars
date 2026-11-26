@@ -1,6 +1,6 @@
 # sugars
 
-把 TangramJS 的编辑器、图表、高亮、动画、滚动控制和基础工具，以及 GrandAPP 的 K Line Mobile 整理为独立包。AMD、旧式 Promise 和类工厂使用 ES5 并提供普通脚本入口，其余包使用 ESM。项目结构、规范和维护资料从 [项目文档](docs/README.md) 进入。
+把 TangramJS 的编辑器、图表、高亮、数据工具和界面组件，以及 GrandAPP 的 K Line Mobile 整理为独立包。AMD、旧式 Promise 和类工厂使用 ES5 并提供普通脚本入口，其余包使用 ESM。项目结构、规范和维护资料从 [项目文档](docs/README.md) 进入。
 
 | 包 | 用途 |
 | --- | --- |
@@ -9,18 +9,24 @@
 | `@sugars/charts` | 切出 TangramJS 的 Canvas 渲染、比例尺和提示框 |
 | `@sugars/kline` | 支持鼠标和触摸的 Canvas K 线图 |
 | `@sugars/highlight` | 代码块语法高亮和纯文本转换，附历史语言规则与主题 |
-| [`@sugars/async`](packages/async/README.md) | ES5 AMD 加载器和 TangramJS 旧式 Promise |
-| [`@sugars/declare`](packages/declare/README.md) | ES5 原型类工厂 |
+| [`@sugars/async`](packages/async/README.md) | **ES5 兼容** · AMD 加载器和 TangramJS 旧式 Promise |
+| [`@sugars/declare`](packages/declare/README.md) | **ES5 兼容** · 原型类工厂 |
 | [`@sugars/animation`](packages/animation/README.md) | 场景和帧组成的动画播放器 |
 | [`@sugars/scroll-view`](packages/scroll-view/README.md) | 绑定调用方轨道和滑块的原生滚动控制器 |
 | [`@sugars/tools`](packages/tools/README.md) | 可按分类或单函数导入的基础工具 |
+| [`@sugars/simple-mvvm`](packages/simple-mvvm/README.md) | 数据观察、自定义渲染和虚拟 DOM |
+| [`@sugars/swiper`](packages/swiper/README.md) | 七种布局和切换预设共用的轮播控制 |
+| [`@sugars/visual-form`](packages/visual-form/README.md) | 用一份字段定义编辑和校验 JSON |
+| [`@sugars/simple-sql`](packages/simple-sql/README.md) | 带字段约束和 SQL 查询的本地表 |
+| [`@sugars/3d-pictures`](packages/3d-pictures/README.md) | 鼠标和触摸拖动图片序列 |
+| [`@sugars/dom`](packages/dom/README.md) | 轻量 DOM 集合与 jQuery 风格的插件接口 |
 
 ```sh
 npm ci
 npm run build
 ```
 
-工作区使用 `packages/*`。各包提供 TypeScript 声明，运行入口按包清单选择。
+工作区使用 `packages/*`。现代包使用 TypeScript 7，构建生成目标为 ES2025 的 ESM 和类型声明。表中标有 **ES5 兼容** 的包直接交付 ES5 脚本，也提供类型声明。
 
 ## 原生编辑器
 
@@ -38,6 +44,8 @@ console.log(editor.getValue())
 ```
 
 可传入 `textarea` 或文本 `input`。内核保留字段作为表单值，为它创建一个无样式的编辑区。自定义工具栏点击前可用 `editor.selection.saveRange()` 保存选区。
+
+字段同步和销毁用法见 [SimpleEditor 包说明](packages/editor/README.md)。
 
 ## Web Component
 
@@ -58,6 +66,8 @@ note.addEventListener('editor-change', event => console.log((event as CustomEven
 ```
 
 元素提供 `value`、`readOnly`、`execCommand` 和 `editor`。编辑区在 Light DOM，页面可以直接设定样式。元素断开时释放内核监听，重连时恢复编辑能力。
+
+注册时机和事件见 [Web Component 包说明](packages/editor-element/README.md)。
 
 ## Canvas 图表
 

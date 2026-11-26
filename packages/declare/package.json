@@ -5,9 +5,27 @@
   "type": "commonjs",
   "main": "index.js",
   "types": "index.d.ts",
-  "description": "TangramJS's prototype-based class factory extracted from Pandora.",
+  "description": "ES5 compatibility package. TangramJS's prototype-based class factory extracted from Pandora.",
   "exports": {
-    ".": { "types": "./index.d.ts", "default": "./index.js" }
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    }
   },
-  "files": ["*.js", "*.d.ts", "THIRD-PARTY-NOTICES.md", "licenses"]
+  "files": [
+    "*.js",
+    "*.d.ts",
+    "THIRD-PARTY-NOTICES.md",
+    "licenses"
+  ],
+  "keywords": [
+    "es5",
+    "browser-compatibility",
+    "legacy",
+    "class-factory"
+  ],
+  "sugars": {
+    "runtime": "es5",
+    "compatibility": true
+  }
 }

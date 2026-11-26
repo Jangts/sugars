@@ -37,7 +37,7 @@ export class Grid extends ChartElement {
             //this.save();
             this.fit();
         }
-    update(newProps) {
+    update(newProps: object) {
             Object.assign(this, newProps);
             //this.save();
             return this.fit();
@@ -154,7 +154,7 @@ export class Grid extends ChartElement {
                 this.yValues = [1];
             }
         }
-    calculateYRange(currentHeight) {
+    calculateYRange(currentHeight: number) {
         let valuesArray: number[];
             if (this.status === 1 || this.status === 5) {
                 this.ySteps = this.yLabels.length;
@@ -202,7 +202,7 @@ export class Grid extends ChartElement {
             this.yLabelStep = Math.ceil(this.ySteps / yLabelSteps);
             return this;
         }
-    calculateXRange(currentWidth) {
+    calculateXRange(currentWidth: number) {
         let valuesArray: number[];
             if (this.status === 0 || this.status === 5) {
                 // 横轴为项，或横纵皆为项
@@ -277,7 +277,7 @@ export class Grid extends ChartElement {
                 this.baseX = this.calculateX(0);
             }
         }
-    calculateX(index) {
+    calculateX(index: number) {
             if (this.status === 0 || this.status === 5) {
                 var innerWidth = this.width - (this.xScalePaddingLeft + this.xScalePaddingRight),
                     valueWidth = innerWidth / Math.max((this.xSteps - ((this.xOffsetSplitLines) ? 0 : 1)), 1),
@@ -291,7 +291,7 @@ export class Grid extends ChartElement {
             var scalingFactor = this.drawingAreaX / (this.maxX - this.minX);
             return this.leftPoint + (scalingFactor * (value - this.minX));
         }
-    calculateY(index) {
+    calculateY(index: number) {
             if (this.status === 1 || this.status === 5) {
                 var innerHeight = this.height - (this.yScalePaddingTop + this.yScalePaddingBottom),
                     valueHeight = innerHeight / Math.max((this.ySteps - ((this.yOffsetSplitLines) ? 0 : 1)), 1),
@@ -314,7 +314,7 @@ export class Grid extends ChartElement {
                 this.drawXAxis(xLabelGap);
             }
         }
-    drawYAxis(yLabelGap) {
+    drawYAxis(yLabelGap: number) {
             if (this.yAxisShow) {
                 var ctx = this.ctx;
                 ctx.fillStyle = this.xLabelFontColor;
@@ -354,7 +354,7 @@ export class Grid extends ChartElement {
                 }, this);
             }
         }
-    drawXAxis(xLabelGap) {
+    drawXAxis(xLabelGap: number) {
             if (this.xAxisShow) {
                 var ctx = this.ctx;
                 ctx.fillStyle = this.xLabelFontColor;

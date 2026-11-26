@@ -1,0 +1,22 @@
+{
+  "name": "@sugars/visual-form",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Schema-driven JSON forms ported from TangramJS VisualJOSN and Model.",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist/*.js",
+    "dist/*.d.ts",
+    "THIRD-PARTY-NOTICES.md",
+    "licenses"
+  ],
+  "dependencies": {
+    "@sugars/simple-mvvm": "0.1.0"
+  }
+}

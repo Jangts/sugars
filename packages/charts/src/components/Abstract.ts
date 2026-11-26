@@ -27,14 +27,14 @@ export class ChartElement {
             delete this._saved._saved;
             return this;
         }
-    update(newProps) {
+    update(newProps: object) {
             eachEntry(newProps, function(key, value) {
                 this._saved[key] = this[key];
                 this[key] = value;
             }, this);
             return this;
         }
-    transition(props, ease) {
+    transition(props: Record<string, number>, ease: number) {
             eachEntry(props, function(key, value) {
                 this[key] = ((value - this._saved[key]) * ease) + this._saved[key];
             }, this);

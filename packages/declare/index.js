@@ -41,6 +41,19 @@
         return copy(this, [], [], true);
     }
 
+    var initializers = [];
+
+    function bindInitializer(method, parent) {
+        return function () {
+            initializers.push({ instance: this, parent: parent });
+            try {
+                return method.apply(this, arguments);
+            } finally {
+                initializers.pop();
+            }
+        };
+    }
+
     function declare() {
         var args = Array.prototype.slice.call(arguments);
         var label = typeof args[0] === 'string' ? args.shift() : '';
@@ -56,7 +69,7 @@
 
         for (var index = 0; index < args.length; index++) {
             if (!args[index] || typeof args[index] !== 'object') break;
-            addMembers(prototype, args[index]);
+            addMembers(prototype, args[index], parent);
         }
 
         function Class() {
@@ -67,7 +80,19 @@
 
         Object.defineProperties(prototype, {
             constructor: { value: Class, configurable: true, writable: true },
-            _parent: { value: parent, configurable: true, writable: true, enumerable: true }
+            _parent: {
+                configurable: true,
+                enumerable: true,
+                get: function () {
+                    for (var i = initializers.length - 1; i >= 0; i--) {
+                        if (initializers[i].instance === this) return initializers[i].parent;
+                    }
+                    return parent;
+                },
+                set: function (value) {
+                    Object.defineProperty(this, '_parent', { value: value, configurable: true, writable: true, enumerable: true });
+                }
+            }
         });
         Class.prototype = prototype;
         if (label) {
@@ -81,9 +106,13 @@
         return Class;
     }
 
-    function addMembers(target, source) {
+    function addMembers(target, source, parent) {
         Object.getOwnPropertyNames(source).forEach(function (name) {
-            Object.defineProperty(target, name, Object.getOwnPropertyDescriptor(source, name));
+            var descriptor = Object.getOwnPropertyDescriptor(source, name);
+            if (name === '_init' && typeof descriptor.value === 'function') {
+                descriptor.value = bindInitializer(descriptor.value, parent);
+            }
+            Object.defineProperty(target, name, descriptor);
         });
     }
 

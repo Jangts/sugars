@@ -3,7 +3,9 @@ import { ChartElement } from '../Abstract.js'
 import * as helpers from '../../util/helpers.js'
 
 export class Arc extends ChartElement {
-    inRange(chartX, chartY) {
+    declare x: number
+    declare y: number
+    inRange(chartX: number, chartY: number) {
             var pointRelativePosition = helpers.getAngleFromPoint(this, {
                 x: chartX,
                 y: chartY
@@ -31,7 +33,7 @@ export class Arc extends ChartElement {
                 y: this.y + (Math.sin(centreAngle) * rangeFromCentre)
             };
         }
-    draw(animationPercent?) {
+    draw(animationPercent?: number) {
             var easingDecimal = animationPercent || 1;
 
             var ctx = this.ctx;

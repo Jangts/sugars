@@ -16,12 +16,14 @@
 | `packages/animation/src` | 场景与帧的调度及播放状态，调用方负责绘制 |
 | `packages/scroll-view/src` | 几何计算与 DOM 行为分开，原生视口持有滚动位置，调用方负责结构和样式 |
 | `packages/tools/src` | 一个公开函数对应一个模块，分类入口汇总函数，根入口汇总分类 |
+| `packages/simple-mvvm/src` | Observer 持有字段订阅，ViewModel 选择渲染路径并管理挂载，VElement 持有节点描述并复用 diff 与 patch |
+| `packages/dom/src` | 独立交付历史 Elements 和 jQuery 风格的插件接口，以原生 DOM 实现集合、事件和效果 |
 
 包间依赖通过清单和公开入口声明。编辑器保持普通 DOM 接入能力，Web Component 直接使用该能力。图表独立持有 Canvas 绘制模块。工具栏、弹窗、状态栏和视觉样式由编辑器的调用方组织。
 
 ## 原生 API 与局部复用
 
-直接使用原生元素类型、`querySelector`、`classList`、事件、Selection、Range 和 Canvas。封装集中在有语义的组合操作，例如选区恢复、插入内容后的光标处理、同一生命周期内的监听清理。只转发单个原生方法的别名、链式 DOM 包装以及仿 jQuery 的公共工具层超出本项目约定。
+各业务包直接使用原生元素类型、`querySelector`、`classList`、事件、Selection、Range 和 Canvas。封装集中在有语义的组合操作，例如选区恢复、插入内容后的光标处理、同一生命周期内的监听清理。需要 jQuery 风格接口的外部插件可使用独立的 `@sugars/dom`。
 
 保留职责明确的局部 helper，存在实际通用消费场景后再评估共享边界。通用数据操作可使用 `lodash-es` 等现成依赖，替换时先对照回调参数、接收者和数组合并行为。DOM 操作和绘制规则由对应模块持有。
 

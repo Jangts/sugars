@@ -1,0 +1,14 @@
+{
+  "name": "@sugars/simple-mvvm",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "TangramJS Observer, ViewModel, and virtual DOM as independent ES modules.",
+  "exports": {
+    ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+    "./observer": { "types": "./dist/observer.d.ts", "import": "./dist/observer.js" },
+    "./view-model": { "types": "./dist/view-model.d.ts", "import": "./dist/view-model.js" },
+    "./v-element": { "types": "./dist/v-element.d.ts", "import": "./dist/v-element.js" }
+  },
+  "files": ["dist/*.js", "dist/*.d.ts", "THIRD-PARTY-NOTICES.md", "licenses"]
+}

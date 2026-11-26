@@ -2,8 +2,6 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "src",
-    "noImplicitAny": false,
-    "noUncheckedIndexedAccess": false,
     "outDir": "dist",
     "tsBuildInfoFile": "dist/.tsbuildinfo"
   },

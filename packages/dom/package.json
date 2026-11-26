@@ -1,0 +1,11 @@
+{
+  "name": "@sugars/dom",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "TangramJS Elements with native DOM and jQuery-style plugin APIs.",
+  "exports": {
+    ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" }
+  },
+  "files": ["dist/*.js", "dist/*.d.ts", "THIRD-PARTY-NOTICES.md", "licenses"]
+}

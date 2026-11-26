@@ -1,5 +1,6 @@
 /*! Ported from TangramJS painter/Charts/types/Bar.js. */
-import { SeriesRenderer } from './Abstract.js'
+import type { BarSeries as BarOptions } from '../types.js'
+import { SeriesRenderer, type ResolvedSeries } from './Abstract.js'
 import { Rectangle } from '../components/sharps/Rectangle.js'
 import { mergeOptions } from '../series-data.js'
 import { shapeWith } from '../components/Abstract.js'
@@ -12,9 +13,9 @@ import type { Charts } from '../index.js'
 
 export class BarSeries extends SeriesRenderer {
     declare defaults: any
-    initialize(options) {
-            var options = mergeOptions(this.defaults, options),
-                barStrokeWidth = parseInt(options.itemStyle.normal.barBorderWidth);
+    initialize(input: object) {
+            var options = mergeOptions(this.defaults, input) as ResolvedSeries<BarOptions>,
+                barStrokeWidth = parseInt(String(options.itemStyle.normal.barBorderWidth));
             this.options = {
                 index: options.index,
                 name: options.name,
@@ -47,25 +48,25 @@ export class BarSeries extends SeriesRenderer {
             this.buildSegments(options.data);
 
         }
-    buildSegments(data) {
+    buildSegments(data: BarOptions["data"]) {
             eachEntry(data, function(index, value) {
                 this.addSegment(index, value);
             }, this);
         }
-    update(data, datasetIndex) {
+    update(data: BarOptions["data"], datasetIndex?: number) {
             data = data || [];
             eachEntry(this.segments, function(index, segment) {
-                segment.value1 = ((segment.type === 2) || (segment.type === 3)) ? data[index][0] : 0,
-                    segment.value2 = ((segment.type === 2) || (segment.type === 3)) ? data[index][1] : data[index],
+                segment.value1 = ((segment.type === 2) || (segment.type === 3)) ? (data[index] as readonly [number, number])[0] : 0,
+                    segment.value2 = ((segment.type === 2) || (segment.type === 3)) ? (data[index] as readonly [number, number])[1] : data[index],
                     segment.restore(['fillColor', 'strokeColor', 'strokeWidth']);
                 segment.save();
                 this.calculate(index, segment);
             }, this);
             for (var index = this.segments.length; index < data.length; index++) {
-                this.addSegment(index, data[index]);
+                this.addSegment(index, data[index]!);
             }
         }
-    addSegment(index, value) {
+    addSegment(index: number, value: BarOptions["data"][number] | undefined) {
             if (this.grid.status < 4 && value != null) {
                 if (typeof value === 'number') {
                     var segment = new this.BarClass({
@@ -115,7 +116,7 @@ export class BarSeries extends SeriesRenderer {
                 segment.save();
             }
         }
-    calculate(index, segment) {
+    calculate(index: number, segment: ChartElement) {
             var length = this.instance.series.bar?.length ?? 1;
             var setGap = this.options.barDatasetSpacing;
             var valGap = this.options.barValueSpacing;
@@ -188,11 +189,11 @@ export class BarSeries extends SeriesRenderer {
                     break;
             }
         }
-    removeSegment(index) {
-            index = parseInt(index) || 0;
+    removeSegment(index: string | number) {
+            index = parseInt(index as string) || 0;
             this.segments.splice(index, 1);
         }
-    getSegmentsAtEvent(e, charts) {
+    getSegmentsAtEvent(e: MouseEvent | TouchEvent, charts?: SeriesRenderer[]) {
             var segmentsArray: ChartElement[] = [],
                 eventPosition = events.getRelativePosition(e);
             visitUntil(this.segments, function(index, segment) {
@@ -209,7 +210,7 @@ export class BarSeries extends SeriesRenderer {
             }, this);
             return segmentsArray;
         }
-    draw(ease?) {
+    draw(ease?: number) {
             var easingDecimal = ease ?? 1;
             var ctx = this.ctx,
                 datasetIndex = this.options.index;
@@ -277,31 +278,31 @@ export function bar(this: Charts) {
         if (grid) {
             grid.charts.bars = [];
             Object.assign(grid, {
-                calculateBarX: function(this: Grid, datasetCount, datasetIndex, barIndex, datasetSpacing, valueSpacing) {
+                calculateBarX: function(this: Grid, datasetCount: number, datasetIndex: number, barIndex: number, datasetSpacing: number, valueSpacing: number) {
                     var xWidth = this.calculateBaseWidth(valueSpacing),
                         xAbsolute = this.calculateX(barIndex) - (xWidth / 2),
                         barWidth = this.calculateBarWidth(datasetCount, datasetSpacing, valueSpacing);
                     return xAbsolute + (barWidth * datasetIndex) + (datasetIndex * datasetSpacing) + barWidth / 2;
                 },
-                calculateBaseWidth: function(this: Grid, valueSpacing) {
+                calculateBaseWidth: function(this: Grid, valueSpacing: number) {
                     return (this.calculateX(1) - this.calculateX(0)) - (2 * valueSpacing);
                 },
-                calculateBarWidth: function(this: Grid, datasetCount, datasetSpacing, valueSpacing) {
+                calculateBarWidth: function(this: Grid, datasetCount: number, datasetSpacing: number, valueSpacing: number) {
                     //The padding between datasets is to the right of each bar, providing that there are more than 1 dataset
                     var baseWidth = this.calculateBaseWidth(valueSpacing) - ((datasetCount - 1) * datasetSpacing);
                     return Math.max(0, baseWidth / datasetCount);
                 },
 
-                calculateBarY: function(this: Grid, datasetCount, datasetIndex, barIndex, datasetSpacing, valueSpacing) {
+                calculateBarY: function(this: Grid, datasetCount: number, datasetIndex: number, barIndex: number, datasetSpacing: number, valueSpacing: number) {
                     var yHeight = this.calculateBaseHeight(valueSpacing),
                         yAbsolute = this.calculateY(barIndex) + (yHeight / 2),
                         barHeight = this.calculateBarHeight(datasetCount, datasetSpacing, valueSpacing);
                     return yAbsolute - (barHeight * datasetIndex) - (datasetIndex * datasetSpacing) - barHeight / 2;
                 },
-                calculateBaseHeight: function(this: Grid, valueSpacing) {
+                calculateBaseHeight: function(this: Grid, valueSpacing: number) {
                     return (this.calculateY(0) - this.calculateY(1)) - (2 * valueSpacing);
                 },
-                calculateBarHeight: function(this: Grid, datasetCount, datasetSpacing, valueSpacing) {
+                calculateBarHeight: function(this: Grid, datasetCount: number, datasetSpacing: number, valueSpacing: number) {
                     //The padding between datasets is to the right of each bar, providing that there are more than 1 dataset
                     var baseHeight = this.calculateBaseHeight(valueSpacing) - ((datasetCount - 1) * datasetSpacing);
                     return Math.max(0, baseHeight / datasetCount);
@@ -311,8 +312,9 @@ export function bar(this: Charts) {
             eachEntry(this.series.bar, function(i, options) {
                 options.index = id++;
                 chartName = this.getChartName(options.name);
-                if (this.historyCharts[chartName] && this.historyCharts[chartName].type == 'bar') {
-                    chart = this.historyCharts[chartName];
+                const previous = this.historyCharts[chartName];
+                if (previous && previous.type == 'bar') {
+                    chart = previous;
                     chart.update(options.data, options.index);
                 } else {
                     chart = new BarSeries(options, this, options.zIndex);

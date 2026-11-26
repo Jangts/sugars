@@ -9,7 +9,7 @@ export class Line extends ChartElement {
     declare bezierCurve: any
     declare bezierCurveTension: any
     declare datasetStroke: any
-    draw(closePath?) {
+    draw(closePath?: boolean) {
             var ctx = this.ctx;
             if (this.bezierCurve) {
                 var tension = (this.index > 0 && this.index < this.siblings - 1) ? this.bezierCurveTension : 0;

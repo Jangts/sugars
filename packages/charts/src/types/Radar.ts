@@ -1,5 +1,6 @@
 /*! Ported from TangramJS painter/Charts/types/Radar.js. */
-import { SeriesRenderer } from './Abstract.js'
+import type { RadarSeries as RadarOptions, Paint } from '../types.js'
+import { SeriesRenderer, type ResolvedSeries } from './Abstract.js'
 import { Line } from '../components/sharps/Line.js'
 import { Point } from '../components/sharps/Point.js'
 import { mergeOptions } from '../series-data.js'
@@ -43,9 +44,9 @@ var defaultConfig = {
 
 export class RadarSeries extends SeriesRenderer {
     declare defaults: any
-    initialize(options) {
+    initialize(input: object) {
             var instance = this.instance,
-                options = mergeOptions(this.defaults, options);
+                options = mergeOptions(this.defaults, input) as ResolvedSeries<RadarOptions> & { lineStyle: NonNullable<RadarOptions['lineStyle']> & { normal?: Paint }; areaStyle: NonNullable<RadarOptions['areaStyle']> };
             this.options = {
                 index: options.index,
                 name: options.name,
@@ -107,7 +108,7 @@ export class RadarSeries extends SeriesRenderer {
             });
             this.buildSegment(options.data);
         }
-    buildSegment(data) {
+    buildSegment(data: RadarOptions["data"]) {
             eachEntry(data, function(index, value) {
                 this.addSegment(index, value);
             }, this);
@@ -117,7 +118,7 @@ export class RadarSeries extends SeriesRenderer {
                 line.siblings = this.lines.length;
             }, this);
         }
-    update(data) {
+    update(data: RadarOptions["data"]) {
             eachEntry(this.segments, function(index, segment) {
                 segment.value = data && data[index] || 0;
                 segment.restore(['display', 'fillColor', 'radius', 'strokeColor', 'strokeWidth']);
@@ -125,7 +126,7 @@ export class RadarSeries extends SeriesRenderer {
                 this.calculate(index, segment);
             }, this);
             for (var index = this.segments.length; index < data.length; index++) {
-                this.addSegment(index, data[index]);
+                this.addSegment(index, data[index]!);
             }
             eachEntry(this.lines, function(index, line) {
                 line.previous = this.lines[index - 1] || this.lines[this.lines.length - 1];
@@ -133,7 +134,7 @@ export class RadarSeries extends SeriesRenderer {
                 line.siblings = this.lines.length;
             }, this);
         }
-    addSegment(index, value) {
+    addSegment(index: number, value: RadarOptions["data"][number] | undefined) {
             var segment = new this.PointClass({
                     type: this.radar.status,
                     value: value,
@@ -153,14 +154,14 @@ export class RadarSeries extends SeriesRenderer {
             });
             segment.save();
         }
-    calculate(index, segment) {
+    calculate(index: number, segment: ChartElement) {
             var position = this.radar.getPointPosition(this.radar.calculateAngle(index), this.radar.calculateRadius(index, segment.value))
             Object.assign(segment, {
                 X: position.x,
                 Y: position.y
             });
         }
-    getSegmentsAtEvent(e) {
+    getSegmentsAtEvent(e: MouseEvent | TouchEvent) {
             var segmentsArray: ChartElement[] = [],
                 eventPosition = events.getRelativePosition(e);
             visitUntil(this.segments, function(index, segment) {
@@ -171,7 +172,7 @@ export class RadarSeries extends SeriesRenderer {
             }, this);
             return segmentsArray;
         }
-    draw(ease?) {
+    draw(ease?: number) {
             var easingDecimal = ease ?? 1,
                 ctx = this.ctx,
                 points: ChartElement[] = [];
@@ -214,8 +215,9 @@ export function radar(this: Charts) {
             eachEntry(this.series.radar, function(i, options) {
                 options.index = id++;
                 chartName = this.getChartName(options.name);
-                if (this.historyCharts[chartName] && this.historyCharts[chartName].type == 'radar') {
-                    chart = this.historyCharts[chartName];
+                const previous = this.historyCharts[chartName];
+                if (previous && previous.type == 'radar') {
+                    chart = previous;
                     chart.update(options.data, options.index);
                 } else {
                     chart = new RadarSeries(options, this, options.zIndex);

@@ -7,7 +7,6 @@
 | [接口设计规范](interface-design-standard.md) | 原调用兼容、缺省与渐进接入、生命周期和公开面 |
 | [代码组织与职责](code-organization.md) | 各包职责、原生 DOM、集中登记和源码组织 |
 | [文档规范](documentation-standard.md) | 正式使用文档、过程资料、包内说明及同步规则 |
-| [代码检查与验收标准](code-review-standard.md) | 移植等价、类型、浏览器行为和包体的证据要求 |
 
 ## 本项目
 

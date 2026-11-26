@@ -1,0 +1,22 @@
+{
+  "name": "@sugars/3d-pictures",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Drag-controlled image sequences ported from TangramJS ThreeDimensionalEyes.",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist/*.js",
+    "dist/*.d.ts",
+    "THIRD-PARTY-NOTICES.md",
+    "licenses"
+  ],
+  "dependencies": {
+    "@sugars/simple-mvvm": "0.1.0"
+  }
+}

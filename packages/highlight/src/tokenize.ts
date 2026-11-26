@@ -29,7 +29,9 @@ function matchPattern(pattern: RegExp, text: string, lookbehind?: boolean) {
     return value ? { from: match.index + prefixLength, value } : undefined
 }
 
-function applyRule(text: string, stream: TokenStream, type: string, rule: Pattern) {
+type ActiveRules = Map<Grammar, Set<string>>
+
+function applyRule(text: string, stream: TokenStream, type: string, rule: Pattern, active: ActiveRules) {
     for (let index = 0; index < stream.length; index++) {
         let segment = stream[index]!
         if (typeof segment !== 'string') continue
@@ -61,7 +63,7 @@ function applyRule(text: string, stream: TokenStream, type: string, rule: Patter
         if (!match) continue
         const before = segment.slice(0, match.from)
         const after = segment.slice(match.from + match.value.length)
-        const content = rule.inside ? tokenize(match.value, rule.inside) : match.value
+        const content = rule.inside ? tokenizeNested(match.value, rule.inside, active) : match.value
         const replacement: TokenStream = []
         if (before) replacement.push(before)
         replacement.push(new Token(type, content, rule.alias, match.value, !!rule.greedy))
@@ -72,6 +74,26 @@ function applyRule(text: string, stream: TokenStream, type: string, rule: Patter
 }
 
 export function tokenize(text: string, grammar: Grammar): TokenStream {
+    return tokenizeNested(text, grammar, new Map())
+}
+
+function tokenizeNested(text: string, grammar: Grammar, active: ActiveRules): TokenStream {
+    let inputs = active.get(grammar)
+    if (!inputs) {
+        inputs = new Set()
+        active.set(grammar, inputs)
+    }
+    if (inputs.has(text)) throw new TypeError('Highlight grammar recurses without consuming input')
+    inputs.add(text)
+    try {
+        return tokenizeRules(text, grammar, active)
+    } finally {
+        inputs.delete(text)
+        if (!inputs.size) active.delete(grammar)
+    }
+}
+
+function tokenizeRules(text: string, grammar: Grammar, active: ActiveRules): TokenStream {
     const stream: TokenStream = [text]
     const rules = grammar.rest ? { ...grammar, ...grammar.rest } : grammar
 
@@ -80,7 +102,7 @@ export function tokenize(text: string, grammar: Grammar): TokenStream {
         for (const candidate of Array.isArray(candidates) ? candidates : [candidates]) {
             if (!isRule(candidate)) continue
             const rule = candidate instanceof RegExp ? { pattern: candidate } : candidate
-            if (!applyRule(text, stream, type, rule)) return stream
+            if (!applyRule(text, stream, type, rule, active)) return stream
         }
     }
     return stream

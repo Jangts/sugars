@@ -2,11 +2,14 @@
 
 import { minNumber, maxNumber } from "../series-data.js"
 
-export function aliasPixel(pixelWidth) {
+type XY = { x: number; y: number }
+type CircleOptions = Pick<import('../types.js').PieSeries, 'center' | 'radius'>
+
+export function aliasPixel(pixelWidth: number) {
   return (pixelWidth % 2 === 0) ? 0 : 0.5;
 }
 
-export function calculateCircleStyle(options, width, height) {
+export function calculateCircleStyle(options: CircleOptions, width: number, height: number) {
   var maxRadius = minNumber([width, height]) / 2;
   let radius = maxRadius * 0.75,
       x = width / 2,
@@ -14,22 +17,22 @@ export function calculateCircleStyle(options, width, height) {
 
   if (options.radius) {
       if (isPercent(options.radius)) {
-          radius = maxRadius * parseInt(options.radius) / 100
+          radius = maxRadius * parseInt(options.radius as string) / 100
       } else if (isNumeric(options.radius)) {
-          radius = parseFloat(options.radius);
+          radius = parseFloat(options.radius as string);
       }
   }
 
   if (Array.isArray(options.center) && options.center.length === 2) {
       if (isPercent(options.center[0])) {
-          x = width * parseInt(options.center[0]) / 100
+          x = width * parseInt(options.center[0] as string) / 100
       } else if (isNumeric(options.center[0])) {
-          x = parseFloat(options.center[0]);
+          x = parseFloat(options.center[0] as string);
       }
       if (isPercent(options.center[1])) {
-          y = height * parseInt(options.center[1]) / 100
+          y = height * parseInt(options.center[1] as string) / 100
       } else if (isNumeric(options.center[1])) {
-          y = parseFloat(options.center[1]);
+          y = parseFloat(options.center[1] as string);
       }
   }
   return {
@@ -40,27 +43,27 @@ export function calculateCircleStyle(options, width, height) {
   }
 }
 
-export function calculateDoughnutStyle(options, width, height) {
+export function calculateDoughnutStyle(options: CircleOptions, width: number, height: number) {
   var maxRadius = minNumber([width, height]) / 2;
   let innerRadius = 0,
       outerRadius = maxRadius * 0.75,
       x = width / 2,
       y = height / 2;
   if (isNumeric(options.radius)) outerRadius = Number(options.radius);
-  else if (isPercent(options.radius)) outerRadius = maxRadius * parseFloat(options.radius) / 100;
+  else if (isPercent(options.radius)) outerRadius = maxRadius * parseFloat(options.radius as string) / 100;
   else if (Array.isArray(options.radius)) {
       if (options.radius[0]) {
           if (isPercent(options.radius[0])) {
-              innerRadius = maxRadius * parseInt(options.radius[0]) / 100
+              innerRadius = maxRadius * parseInt(options.radius[0] as string) / 100
           } else if (isNumeric(options.radius[0])) {
-              innerRadius = parseFloat(options.radius[0]);
+              innerRadius = parseFloat(options.radius[0] as string);
           }
       }
       if (options.radius[1]) {
           if (isPercent(options.radius[1])) {
-              outerRadius = maxRadius * parseInt(options.radius[1]) / 100
+              outerRadius = maxRadius * parseInt(options.radius[1] as string) / 100
           } else if (isNumeric(options.radius[1])) {
-              outerRadius = parseFloat(options.radius[1]);
+              outerRadius = parseFloat(options.radius[1] as string);
           }
       }
 
@@ -68,14 +71,14 @@ export function calculateDoughnutStyle(options, width, height) {
 
   if (Array.isArray(options.center) && options.center.length === 2) {
       if (isPercent(options.center[0])) {
-          x = width * parseInt(options.center[0]) / 100
+          x = width * parseInt(options.center[0] as string) / 100
       } else if (isNumeric(options.center[0])) {
-          x = parseFloat(options.center[0]);
+          x = parseFloat(options.center[0] as string);
       }
       if (isPercent(options.center[1])) {
-          y = height * parseInt(options.center[1]) / 100
+          y = height * parseInt(options.center[1] as string) / 100
       } else if (isNumeric(options.center[1])) {
-          y = parseFloat(options.center[1]);
+          y = parseFloat(options.center[1] as string);
       }
   }
   return {
@@ -87,7 +90,7 @@ export function calculateDoughnutStyle(options, width, height) {
   }
 }
 
-export function calculateOrderOfMagnitude(val) {
+export function calculateOrderOfMagnitude(val: number) {
   return Math.floor(Math.log(val) / Math.LN10);
 }
 
@@ -170,7 +173,7 @@ export function calculateScaleRange(valuesArray: number[], drawingSize: number, 
   }
 
   if (isPolar) {
-      return [numberOfSteps, stepValue];
+      return [numberOfSteps, stepValue] as [number, number];
   }
 
   if (isXoA) {
@@ -190,7 +193,7 @@ export function calculateScaleRange(valuesArray: number[], drawingSize: number, 
   };
 }
 
-export function getAngleFromPoint(centrePoint, anglePoint) {
+export function getAngleFromPoint(centrePoint: XY, anglePoint: XY) {
   var distanceFromXCenter = anglePoint.x - centrePoint.x,
       distanceFromYCenter = anglePoint.y - centrePoint.y,
       radialDistanceFromCenter = Math.sqrt(distanceFromXCenter * distanceFromXCenter + distanceFromYCenter * distanceFromYCenter);
@@ -208,7 +211,7 @@ export function getAngleFromPoint(centrePoint, anglePoint) {
   };
 }
 
-export function splineCurve(FirstPoint, MiddlePoint, AfterPoint, t) {
+export function splineCurve(FirstPoint: XY, MiddlePoint: XY, AfterPoint: XY, t: number) {
   var d01 = Math.sqrt(Math.pow(MiddlePoint.x - FirstPoint.x, 2) + Math.pow(MiddlePoint.y - FirstPoint.y, 2)),
       d12 = Math.sqrt(Math.pow(AfterPoint.x - MiddlePoint.x, 2) + Math.pow(AfterPoint.y - MiddlePoint.y, 2)),
       fa = t * d01 / (d01 + d12 || 1),

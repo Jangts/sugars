@@ -6,6 +6,8 @@
     'use strict';
 
     var specialDependencies = ['require', 'exports', 'module'];
+    var timedOutScript = '__sugarsAmdTimedOut';
+    var retrySequence = 0;
 
     function isUrl(id) {
         return /^(?:[a-z][a-z0-9+.-]*:|\/)/i.test(id);
@@ -80,9 +82,11 @@
         var paths = Object.create(null);
         var packages = Object.create(null);
         var scripts = Object.create(null);
+        var retries = Object.create(null);
         var queue = [];
         var active = null;
         var baseUrl = './';
+        var timeoutMs = 15000;
 
         function absoluteUrl(path) {
             if (!document) return path;
@@ -93,6 +97,13 @@
 
         function configure(config) {
             config = config || {};
+            if (config.timeoutMs !== undefined) {
+                if (typeof config.timeoutMs !== 'number' || !isFinite(config.timeoutMs) ||
+                    config.timeoutMs < 1 || config.timeoutMs > 2147483647) {
+                    throw new RangeError('AMD timeoutMs must be between 1 and 2147483647');
+                }
+                timeoutMs = config.timeoutMs;
+            }
             var base = config.baseUrl || config.mainUrl;
             if (base) baseUrl = absoluteUrl(base.replace(/\/*$/, '/'));
             (config.packages || []).forEach(function (entry) {
@@ -137,6 +148,8 @@
         }
 
         function define() {
+            var current = document && document.currentScript;
+            if (current && current[timedOutScript]) return;
             // One active request supplies a fallback for engines without document.currentScript.
             var request = active && (!('currentScript' in document) || document.currentScript === active.node) ? active : null;
             try {
@@ -176,13 +189,22 @@
             });
         }
 
+        function requestSource(url) {
+            if (!retries[url]) return url;
+            var hash = url.indexOf('#');
+            var address = hash < 0 ? url : url.slice(0, hash);
+            var fragment = hash < 0 ? '' : url.slice(hash);
+            return address + (address.indexOf('?') < 0 ? '?' : '&') +
+                '_sugarsAmdRetry=' + retries[url] + fragment;
+        }
+
         function start(request) {
             active = request;
             var node = document.createElement('script');
             var supportsLoad = 'onload' in node;
             request.node = node;
             node.async = true;
-            node.src = request.url;
+            node.src = requestSource(request.url);
             node.onload = function () { finish(request.error); };
             node.onerror = function () { finish(new Error('Unable to load AMD script: ' + request.url)); };
             if (!supportsLoad) {
@@ -190,6 +212,13 @@
                     if (node.readyState === 'loaded' || node.readyState === 'complete') finish(request.error);
                 };
             }
+            var timer = root.setTimeout(function () {
+                if (request !== active) return;
+                node[timedOutScript] = true;
+                // The browser can still have the previous URL in flight after we remove its node.
+                retries[request.url] = Date.now() + '-' + (++retrySequence);
+                finish(new Error('AMD script timed out: ' + request.url));
+            }, timeoutMs);
             try {
                 var head = document.head || document.getElementsByTagName('head')[0];
                 head.appendChild(node);
@@ -199,6 +228,7 @@
 
             function finish(error) {
                 if (request !== active) return;
+                root.clearTimeout(timer);
                 node.onload = node.onerror = node.onreadystatechange = null;
                 var ids = Object.keys(request.definitions);
                 if (!error && !ids.length) error = new Error('AMD script did not call define: ' + request.url);
@@ -213,6 +243,7 @@
                     delete scripts[request.url];
                     if (node.parentNode) node.parentNode.removeChild(node);
                 } else {
+                    delete retries[request.url];
                     ids.forEach(function (id) { definitions[id] = request.definitions[id]; });
                     request.ids = ids;
                 }

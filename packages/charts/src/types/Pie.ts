@@ -1,5 +1,6 @@
 /*! Ported from TangramJS painter/Charts/types/Pie.js. */
-import { SeriesRenderer } from './Abstract.js'
+import type { PieSeries as PieOptions, Datum } from '../types.js'
+import { SeriesRenderer, type ResolvedSeries } from './Abstract.js'
 import { Arc } from '../components/sharps/Arc.js'
 import { mergeOptions } from '../series-data.js'
 import { isNumeric } from '../util/helpers.js'
@@ -64,10 +65,10 @@ var defaultConfig = {
 
 export class PieSeries extends SeriesRenderer {
     declare defaults: any
-    initialize(options) {
+    initialize(input: object) {
             var instance = this.instance,
-                options = mergeOptions(this.defaults, options),
-                barStrokeWidth = parseInt(options.itemStyle.normal.borderWidth),
+                options = mergeOptions(this.defaults, input) as ResolvedSeries<PieOptions>,
+                barStrokeWidth = parseInt(String(options.itemStyle.normal.borderWidth)),
                 emphasisRadius;
 
 
@@ -147,13 +148,13 @@ export class PieSeries extends SeriesRenderer {
             }));
 
         }
-    buildSegment(data) {
+    buildSegment(data: readonly Datum<number>[]) {
             this.calculateTotalAndMax(data);
             eachEntry(data, function(index, elem) {
                 this.addSegment(index, elem, data.length);
             }, this);
         }
-    update(data) {
+    update(data: readonly Datum<number>[]) {
             this.calculateTotalAndMax(data);
             var leng = maxNumber([data.length, this.segments.length]);
             eachEntry(this.segments, function(index, segment) {
@@ -165,10 +166,10 @@ export class PieSeries extends SeriesRenderer {
                 segment.save();
             }, this);
             for (var index = this.segments.length; index < data.length; index++) {
-                this.addSegment(index, data[index], leng);
+                this.addSegment(index, data[index]!, leng);
             }
         }
-    addSegment(index, elem, leng) {
+    addSegment(index: number, elem: Datum<number>, leng: number) {
             var h = (360 * index / leng + 350) % 360,
                 s = [70, 85, 60, 35, 40, 35, 100, 95, 30, 35, 10, 65],
                 l = [60, 60, 60, 50, 50, 50, 40, 40, 35, 60, 70, 60],
@@ -220,7 +221,7 @@ export class PieSeries extends SeriesRenderer {
             this.segments.push(segment);
             segment.save();
         }
-    calculateTotalAndMax(data) {
+    calculateTotalAndMax(data: readonly Datum<number>[]) {
             var values: number[] = [];
             if (this.options.type === 'area') {
                 eachEntry(data, function(index, segment) {
@@ -235,7 +236,7 @@ export class PieSeries extends SeriesRenderer {
             this.total = sum(values);
             this.max = maxNumber(values);
         }
-    calculateCircumference(value) {
+    calculateCircumference(value: number) {
             if (this.total > 0) {
                 switch (this.options.type) {
                     case 'area':
@@ -250,7 +251,7 @@ export class PieSeries extends SeriesRenderer {
                 return 0;
             }
         }
-    calculateRadius(value) {
+    calculateRadius(value: number) {
             if (this.total > 0) {
                 switch (this.options.type) {
                     case 'area':
@@ -265,11 +266,11 @@ export class PieSeries extends SeriesRenderer {
                 return 0;
             }
         }
-    removeSegment(index) {
-            index = parseInt(index) || 0;
+    removeSegment(index: string | number) {
+            index = parseInt(index as string) || 0;
             this.segments.splice(index, 1);
         }
-    getSegmentsAtEvent(e) {
+    getSegmentsAtEvent(e: MouseEvent | TouchEvent) {
             var segmentsArray: ChartElement[] = [];
             var location = events.getRelativePosition(e);
             eachEntry(this.segments, function(index, segment) {
@@ -279,7 +280,7 @@ export class PieSeries extends SeriesRenderer {
             }, this);
             return segmentsArray;
         }
-    draw(easeDecimal?) {
+    draw(easeDecimal?: number) {
             var animDecimal = easeDecimal ?? 1;
             eachEntry(this.segments, function(index, segment) {
                 segment.transition({
@@ -289,7 +290,7 @@ export class PieSeries extends SeriesRenderer {
                 }, animDecimal);
                 segment.endAngle = segment.startAngle + segment.circumference;
                 if (index < this.segments.length - 1) {
-                    this.segments[index + 1].startAngle = segment.endAngle;
+                    this.segments[index + 1]!.startAngle = segment.endAngle;
                 }
                 segment.draw();
             }, this);
@@ -308,8 +309,9 @@ export function pie(this: Charts) {
         eachEntry(this.series.pie, function(i, options) {
             //options.index = id++;
             chartName = this.getChartName(options.name);
-            if (this.historyCharts[chartName] && this.historyCharts[chartName].type == 'pie') {
-                chart = this.historyCharts[chartName];
+            const previous = this.historyCharts[chartName];
+            if (previous && previous.type == 'pie') {
+                chart = previous;
                 chart.update(options.data, options.index);
             } else {
                 chart = new PieSeries(options, this, options.zIndex);

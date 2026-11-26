@@ -13,6 +13,24 @@ export interface Grammar {
     rest?: Grammar
 }
 
+export function grammarPattern(rule: Grammar[string]): Pattern {
+    if (!rule || Array.isArray(rule) || !('pattern' in rule) || !(rule.pattern instanceof RegExp)) {
+        throw new TypeError('Expected a token pattern in the bundled grammar')
+    }
+    return rule as Pattern
+}
+
+export function insideGrammar(rule: Grammar[string]): Grammar {
+    const { inside } = grammarPattern(rule)
+    if (!inside) throw new TypeError('Expected a nested bundled grammar')
+    return inside
+}
+
+export function grammarRules(rule: Grammar[string]): Rule[] {
+    if (!Array.isArray(rule)) throw new TypeError('Expected an array of bundled grammar rules')
+    return rule
+}
+
 type GrammarObject = Record<string, unknown>
 type GrammarVisitor = (this: GrammarObject, key: string, value: unknown, type: string) => void
 
@@ -51,10 +69,12 @@ function walkGrammar(
     }
 }
 
+type GrammarTarget = Record<string, Grammar | undefined> | Grammar | Pattern
+
 interface LanguageMethods {
     extend(name: string, rules: Grammar): Grammar
     insertBefore(name: string, rules: Grammar): Grammar
-    insertBefore(name: string, before: string, rules: Grammar, root?: Record<string, Grammar | undefined>): Grammar
+    insertBefore(name: string, before: string, rules: Grammar, root?: GrammarTarget): Grammar
     DFS: typeof walkGrammar
 }
 
@@ -81,9 +101,10 @@ function insertBefore(
     name: string,
     before: string | Grammar,
     rules?: Grammar,
-    root: Record<string, Grammar | undefined> = languages,
+    root: GrammarTarget = languages,
 ): Grammar {
-    const grammar = Object.hasOwn(root, name) ? root[name] : undefined
+    const entries = root as Record<string, unknown>
+    const grammar = Object.hasOwn(entries, name) ? entries[name] : undefined
     if (!isGrammarObject(grammar)) throw new TypeError(`Unknown highlight grammar: ${name}`)
     if (typeof before !== 'string') return Object.assign(grammar, before)
 
@@ -97,6 +118,6 @@ function insertBefore(
     walkGrammar(languages, function (key, value) {
         if (value === grammar && (this !== root || key !== name)) this[key] = updated
     })
-    root[name] = updated
+    entries[name] = updated
     return updated
 }

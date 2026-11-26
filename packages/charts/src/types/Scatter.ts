@@ -1,5 +1,6 @@
 /*! Ported from TangramJS painter/Charts/types/Scatter.js. */
-import { SeriesRenderer } from './Abstract.js'
+import type { ScatterSeries as ScatterOptions } from '../types.js'
+import { SeriesRenderer, type ResolvedSeries } from './Abstract.js'
 import { Point } from '../components/sharps/Point.js'
 import { mergeOptions } from '../series-data.js'
 import { shapeWith } from '../components/Abstract.js'
@@ -32,9 +33,9 @@ var defaultConfig = {
 
 export class ScatterSeries extends SeriesRenderer {
     declare defaults: any
-    initialize(options) {
+    initialize(input: object) {
             var instance = this.instance,
-                options = mergeOptions(this.defaults, options);
+                options = mergeOptions(this.defaults, input) as ResolvedSeries<ScatterOptions>;
             this.options = {
                 index: options.index,
                 name: options.name,
@@ -77,12 +78,12 @@ export class ScatterSeries extends SeriesRenderer {
             });
             this.buildSegment(options.data);
         }
-    buildSegment(data) {
+    buildSegment(data: ScatterOptions["data"]) {
             eachEntry(data, function(index, value) {
-                if (Array.isArray(value) && Number.isFinite(value[0]) && Number.isFinite(value[1])) this.addSegment(index, value);
+                if (Array.isArray(value) && Number.isFinite(value[0]) && Number.isFinite(value[1])) this.addSegment(index, value as unknown as readonly [number, number]);
             }, this);
         }
-    update(data) {
+    update(data: ScatterOptions["data"]) {
             eachEntry(this.segments, function(index, segment) {
                 segment.value = data && data[index] || 0;
                 segment.base = this.grid.baseY;
@@ -91,10 +92,10 @@ export class ScatterSeries extends SeriesRenderer {
                 this.calculate(index, segment);
             }, this);
             for (var index = this.segments.length; index < data.length; index++) {
-                this.addSegment(index, data[index]);
+                this.addSegment(index, data[index]!);
             }
         }
-    addSegment(index, value) {
+    addSegment(index: number, value: ScatterOptions["data"][number] | undefined) {
             var segment = new this.PointClass({
                 type: this.grid.status,
                 value: value,
@@ -107,7 +108,7 @@ export class ScatterSeries extends SeriesRenderer {
             segment.emphasisRadius = segment.R * 1.2;
             segment.save();
         }
-    calculate(index, segment) {
+    calculate(index: number, segment: ChartElement) {
             Object.assign(segment, {
                 X: this.grid.calculateX(segment.value[0]),
                 Y: this.grid.calculateY(segment.value[1]),
@@ -125,11 +126,11 @@ export class ScatterSeries extends SeriesRenderer {
                 })(this.options.symbolSize, segment.value)
             });
         }
-    removeSegment(index) {
-            index = parseInt(index) || 0;
+    removeSegment(index: string | number) {
+            index = parseInt(index as string) || 0;
             this.segments.splice(index, 1);
         }
-    getSegmentsAtEvent(e, charts) {
+    getSegmentsAtEvent(e: MouseEvent | TouchEvent, charts?: SeriesRenderer[]) {
             var segmentsArray: ChartElement[] = [],
                 eventPosition = events.getRelativePosition(e);
             visitUntil(this.segments, function(index, segment) {
@@ -146,7 +147,7 @@ export class ScatterSeries extends SeriesRenderer {
             }, this);
             return segmentsArray;
         }
-    draw(ease?) {
+    draw(ease?: number) {
             var easingDecimal = ease ?? 1;
             var ctx = this.ctx;
 
@@ -174,8 +175,9 @@ export function scatter(this: Charts) {
             eachEntry(this.series.scatter, function(i, options) {
                 options.index = id++;
                 chartName = this.getChartName(options.name);
-                if (this.historyCharts[chartName] && this.historyCharts[chartName].type == 'scatter') {
-                    chart = this.historyCharts[chartName];
+                const previous = this.historyCharts[chartName];
+                if (previous && previous.type == 'scatter') {
+                    chart = previous;
                     chart.update(options.data, options.index);
                 } else {
                     chart = new ScatterSeries(options, this, options.zIndex);

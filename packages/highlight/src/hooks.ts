@@ -15,6 +15,9 @@ interface ElementEnvironment {
     code: string
     grammar: Grammar | undefined
     highlightedCode?: string
+    /** The bundled template grammars temporarily substitute embedded regions. */
+    tokenStack?: string[]
+    backupCode?: string
 }
 
 interface HighlightEnvironment extends ElementEnvironment {

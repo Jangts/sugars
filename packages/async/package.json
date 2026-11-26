@@ -5,11 +5,36 @@
   "type": "commonjs",
   "main": "index.js",
   "types": "index.d.ts",
-  "description": "The TangramJS AMD loader and legacy Promise helpers as independent modules.",
+  "description": "ES5 compatibility package. The TangramJS AMD loader and legacy Promise helpers as independent modules.",
   "exports": {
-    ".": { "types": "./index.d.ts", "default": "./index.js" },
-    "./amd": { "types": "./amd.d.ts", "default": "./amd.js" },
-    "./promise": { "types": "./promise.d.ts", "default": "./promise.js" }
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    },
+    "./amd": {
+      "types": "./amd.d.ts",
+      "default": "./amd.js"
+    },
+    "./promise": {
+      "types": "./promise.d.ts",
+      "default": "./promise.js"
+    }
   },
-  "files": ["*.js", "*.d.ts", "THIRD-PARTY-NOTICES.md", "licenses"]
+  "files": [
+    "*.js",
+    "*.d.ts",
+    "THIRD-PARTY-NOTICES.md",
+    "licenses"
+  ],
+  "keywords": [
+    "es5",
+    "browser-compatibility",
+    "legacy",
+    "amd",
+    "promise"
+  ],
+  "sugars": {
+    "runtime": "es5",
+    "compatibility": true
+  }
 }

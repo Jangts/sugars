@@ -107,7 +107,7 @@ export class Rectangle extends ChartElement {
     hasValue() {
             return isFinite(this.value2);
         }
-    inRange(X, Y) {
+    inRange(X: number, Y: number) {
             switch (this.type) {
                 case 0:
                 case 2:

@@ -12,7 +12,9 @@
   "files": [
     "dist/*.js",
     "dist/*.d.ts",
-    "dist/emoticons/*.gif"
+    "dist/emoticons/*.gif",
+    "THIRD-PARTY-NOTICES.md",
+    "licenses"
   ],
   "dependencies": {
     "dompurify": "^3.5.0"

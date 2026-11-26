@@ -1,6 +1,6 @@
 # @sugars/highlight
 
-TangramJS `see.highlight` 的独立 ESM 包，运行环境需支持 ES2022。使用 Sugars 根目录的 `npm ci` 和 `npm run build` 构建后，可在工作区通过包名引入。
+TangramJS `see.highlight` 的独立 ESM 包，由 TypeScript 编译生成。使用 Sugars 根目录的 `npm ci` 和 `npm run build` 构建后，可在工作区通过包名引入。
 
 ## 高亮页面代码块
 
@@ -34,5 +34,7 @@ const sameHtml = highlight('const answer = 42;', languages.javascript!, 'javascr
 ```
 
 `highlight` 返回带 `ib-hl` 词法类名的 HTML，未知语言返回经过转义的文本。该入口可在 Node.js 使用。`languages` 提供内置规则及规则扩展方法，`tokenize(text, grammar)` 返回分词结果，`hooks` 提供生成标记与渲染阶段的回调。默认导出汇集原来常用的方法、语言规则和钩子。
+
+自定义嵌套语法重复把同一段文本交给当前调用链中的同一语法时，分词会抛出 `TypeError`。嵌套规则应消费外层语法的一部分文本，或推进到下一条语法规则。
 
 历史代码和主题的来源记录见 [第三方声明](THIRD-PARTY-NOTICES.md)。

@@ -106,13 +106,21 @@ export class Charts {
         this.historyCharts = Object.create(null)
         this.hoverHandlers.length = 0
         this.grid = this.polar = this.radarpolar = null
-        if (this.series.bar || this.series.line || this.series.scatter ) {
-            this.buildGrid()
+        const usedLayers = this.buildLayers = new Set<number>()
+        try {
+            if (this.series.bar || this.series.line || this.series.scatter) this.buildGrid()
+            if (this.options.polar.show && this.options.angleAxis.data?.length) this.buildPolar()
+            if (this.series.radar) this.buildRadar()
+            for (const type of Object.keys(seriesBuilders) as Series['type'][]) {
+                if (this.series[type]?.length) seriesBuilders[type].call(this)
+            }
+        } finally {
+            this.buildLayers = undefined
         }
-        if (this.options.polar.show && this.options.angleAxis.data?.length) this.buildPolar()
-        if (this.series.radar) this.buildRadar()
-        for (const type of Object.keys(seriesBuilders) as Series['type'][]) {
-            if (this.series[type]?.length) seriesBuilders[type].call(this)
+        for (const [zIndex, canvas] of this.layers) {
+            if (usedLayers.has(zIndex)) continue
+            canvas.remove()
+            this.layers.delete(zIndex)
         }
         this.bindHover()
         return animaless ? this.draw() : this.render()
@@ -124,7 +132,11 @@ export class Charts {
         return `${prefix}${index}`
     }
 
+    private buildLayers?: Set<number>
+
     getLayer(zIndex = 0): HTMLCanvasElement {
+        this.assertActive()
+        this.buildLayers?.add(zIndex)
         let canvas = this.layers.get(zIndex)
         if (!canvas) {
             canvas = this.Element.ownerDocument.createElement('canvas')

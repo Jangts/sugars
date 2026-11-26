@@ -179,7 +179,7 @@ export function buildPolar(this: Charts) {
                         }
                     },
                     charts = joinLists(scale.charts.lines, scale.charts.areas, scale.charts.scatters);
-                eachEntry(types, function(i, type) {
+                eachEntry(types, function(i, type: keyof typeof restores) {
                     for (let i = 0; scale.charts[type] && i < scale.charts[type].length && actives.length === 0; i++) {
                         var chart = scale.charts[type][i];
                         var activeSegments = ((this.options.tooltip.type == 'axis') ? chart.getSegmentsAtEvent(evt, charts) : chart.getSegmentsAtEvent(evt));
@@ -204,7 +204,7 @@ export function buildPolar(this: Charts) {
                 if ((this.options.tooltip.type == 'axis') && (actives.length > 0) && (scale.charts.lines) && (scale.charts.lines.length > 0)) {
                     if (scale.status === 0) {
                         // 横轴为项，纵轴为值
-                        var x = actives[0].x,
+                        var x = actives[0]!.x,
                             y1 = scale.topPoint,
                             y2 = scale.bottomPoint,
                             ctx = scale.ctx;
@@ -222,7 +222,7 @@ export function buildPolar(this: Charts) {
                         // 横轴为值，纵轴为项
                         var x1 = scale.leftPoint,
                             x2 = scale.rightPoint,
-                            y = actives[0].y,
+                            y = actives[0]!.y,
                             ctx = scale.ctx;
                         ctx.translate(0, 0.5);
                         ctx.lineWidth = 1;

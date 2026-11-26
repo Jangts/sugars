@@ -9,7 +9,7 @@ import { getDecimalPlaces } from '../../util/helpers.js'
 import { isFinite } from 'lodash-es'
 import { fontString } from '../../util/canvas.js'
 
-var getMax = function(steps, value) {
+var getMax = function(steps: number, value: number) {
             var stepValue = Math.ceil(value / steps);
             return stepValue * steps;
         };
@@ -21,7 +21,7 @@ export class Polar extends ChartElement {
             this.save();
             this.fit();
         }
-    update(newProps) {
+    update(newProps: object) {
             Object.assign(this, newProps);
             //this.drawingAreaR = (this.display) ? this.radius - (this.radiusLabelFontSize / 2 + this.backdropPaddingY) : this.radius;
             //this.save();
@@ -152,7 +152,7 @@ export class Polar extends ChartElement {
                     this.radiusLabelFontSize,
                     this.radiusBeginAtZero,
                     this.radiusIntegersOnly,
-                    false, true);
+                    false, true) as [number, number];
                 this.splitNumber = updatedRanges[0];
                 this.radiusStepValue = updatedRanges[1];
             } else {
@@ -235,8 +235,8 @@ export class Polar extends ChartElement {
             }
             xProtrusionLeft = furthestLeft;
             xProtrusionRight = Math.ceil(furthestRight - this.width);
-            furthestRightAngle = this.calculateAngle(furthestRightIndex);
-            furthestLeftAngle = this.calculateAngle(furthestLeftIndex);
+            furthestRightAngle = this.calculateAngle(furthestRightIndex!);
+            furthestLeftAngle = this.calculateAngle(furthestLeftIndex!);
             radiusReductionRight = xProtrusionRight / Math.sin(furthestRightAngle + Math.PI / 2);
             radiusReductionLeft = xProtrusionLeft / Math.sin(furthestLeftAngle + Math.PI / 2);
 
@@ -244,7 +244,7 @@ export class Polar extends ChartElement {
             radiusReductionLeft = (isFinite(radiusReductionLeft)) ? radiusReductionLeft : 0;
             this.drawingAreaR = largestPossibleRadius - (radiusReductionLeft + radiusReductionRight) / 2;
         }
-    getPointPosition(angle, radius) {
+    getPointPosition(angle: number, radius: number) {
             return {
                 angle: angle,
                 radius: radius,
@@ -252,11 +252,11 @@ export class Polar extends ChartElement {
                 y: (Math.sin(angle) * radius) + this.yCenter
             };
         }
-    calculateAngle(index) {
+    calculateAngle(index: number) {
             var angleMultiplier = (Math.PI * 2) / this.angleSteps;
             return index * angleMultiplier - (Math.PI / 2);
         }
-    calculateRadius(index, value) {
+    calculateRadius(index: number, value: number) {
             if (this.status === 5) {
                 var scalingFactor = this.drawingAreaR / this.radiusSteps;
                 return index * scalingFactor;
@@ -377,7 +377,7 @@ export class Polar extends ChartElement {
                 }
             }
         }
-    drawAngleLabels(ctx, i) {
+    drawAngleLabels(ctx: CanvasRenderingContext2D, i: number) {
             if (this.angleLabelsShow) {
                 // Extra 3px out for some label spacing
                 var pointLabelPosition = this.getPointPosition(this.calculateAngle(i), this.calculateRadius(i, this.maxRadius + 5));

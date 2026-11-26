@@ -1,5 +1,7 @@
 # @sugars/async
 
+**ES5 兼容包**
+
 TangramJS 的 AMD 加载器和旧式 Promise，运行代码使用 ES5。`amd.js` 和 `promise.js` 可分别用普通 `<script>` 标签加载，也提供 CommonJS 入口。两者可各自使用，AMD 通过回调交付结果。
 
 ## AMD
@@ -32,6 +34,8 @@ define(['./dependency'], function (dependency) {
 ```
 
 `createAmdLoader()` 的模块和脚本缓存属于实例。`installGlobals()` 安装供外部脚本调用的 `define` 和 `require`，返回恢复函数。只使用 `loader.define('id', ...)` 登记内存模块时可直接调用实例方法。`require(['id'], callback, onError)` 异步加载，`require('id')` 在模块加载后同步取值。`require.config()` 支持 `baseUrl`、旧名 `mainUrl`、`paths` 和 `packages`。外部脚本需要浏览器 DOM。
+
+外部脚本开始加载后默认最多等待 15 秒。可用 `timeoutMs` 调整单脚本期限。超时会调用 `onError`，队列继续加载其他脚本。重试会给脚本 URL 附加查询参数，以免浏览器复用仍未完成的请求。
 
 定制 AMD 工厂用依赖数组显式声明 `require`、`exports`、`module`。省略依赖数组的简写工厂可以使用字面量 `require('id')`。
 

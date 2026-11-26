@@ -1,5 +1,6 @@
 /*! Ported from TangramJS painter/Charts/types/Line.js. */
-import { SeriesRenderer } from './Abstract.js'
+import type { LineSeries as LineOptions } from '../types.js'
+import { SeriesRenderer, type ResolvedSeries } from './Abstract.js'
 import { Line } from '../components/sharps/Line.js'
 import { Point } from '../components/sharps/Point.js'
 import { mergeOptions } from '../series-data.js'
@@ -47,9 +48,9 @@ var defaultConfig = {
 
 export class LineSeries extends SeriesRenderer {
     declare defaults: any
-    initialize(options) {
+    initialize(input: object) {
             var instance = this.instance,
-                options = mergeOptions(this.defaults, options);
+                options = mergeOptions(this.defaults, input) as ResolvedSeries<LineOptions> & { lineStyle: NonNullable<LineOptions['lineStyle']>; areaStyle: NonNullable<LineOptions['areaStyle']> };
             this.options = {
                 index: options.index,
                 name: options.name,
@@ -112,7 +113,7 @@ export class LineSeries extends SeriesRenderer {
             });
             this.buildSegment(options.data);
         }
-    buildSegment(data) {
+    buildSegment(data: LineOptions["data"]) {
             eachEntry(data, function(index, value) {
                 this.addSegment(index, value);
             }, this);
@@ -122,7 +123,7 @@ export class LineSeries extends SeriesRenderer {
                 line.siblings = this.lines.length;
             }, this);
         }
-    update(data) {
+    update(data: LineOptions["data"]) {
             eachEntry(this.segments, function(index, segment) {
                 segment.value = data && data[index] || 0;
                 segment.base = this.grid.baseY;
@@ -131,7 +132,7 @@ export class LineSeries extends SeriesRenderer {
                 this.calculate(index, segment);
             }, this);
             for (var index = this.segments.length; index < data.length; index++) {
-                this.addSegment(index, data[index]);
+                this.addSegment(index, data[index]!);
             }
             eachEntry(this.lines, function(index, line) {
                 line.previous = this.lines[index - 1] || line;
@@ -139,7 +140,7 @@ export class LineSeries extends SeriesRenderer {
                 line.siblings = this.lines.length;
             }, this);
         }
-    addSegment(index, value) {
+    addSegment(index: number, value: LineOptions["data"][number] | undefined) {
             var segment = new this.PointClass({
                     type: this.grid.status,
                     value: value,
@@ -154,13 +155,13 @@ export class LineSeries extends SeriesRenderer {
             this.segments.push(segment);
             this.calculate(index, segment);
             Object.assign(segment, {
-                x: this.segments[index - 1] ? this.segments[index - 1].X : segment.X,
-                y: this.segments[index - 1] ? this.segments[index - 1].Y : segment.Y,
+                x: this.segments[index - 1] ? this.segments[index - 1]!.X : segment.X,
+                y: this.segments[index - 1] ? this.segments[index - 1]!.Y : segment.Y,
                 titleLabel: segment.label
             });
             segment.save();
         }
-    calculate(index, segment) {
+    calculate(index: number, segment: ChartElement) {
             switch (segment.type) {
                 case 0:
                     Object.assign(segment, {
@@ -176,11 +177,11 @@ export class LineSeries extends SeriesRenderer {
                     break;
             }
         }
-    removeSegment(index) {
-            index = parseInt(index) || 0;
+    removeSegment(index: string | number) {
+            index = parseInt(index as string) || 0;
             this.segments.splice(index, 1);
         }
-    getSegmentsAtEvent(e, charts) {
+    getSegmentsAtEvent(e: MouseEvent | TouchEvent, charts?: SeriesRenderer[]) {
             var segmentsArray: ChartElement[] = [],
                 eventPosition = events.getRelativePosition(e);
             visitUntil(this.segments, function(index, segment) {
@@ -197,7 +198,7 @@ export class LineSeries extends SeriesRenderer {
             }, this);
             return segmentsArray;
         }
-    draw(ease?) {
+    draw(ease?: number) {
             var easingDecimal = ease ?? 1,
                 ctx = this.ctx,
                 points: ChartElement[] = [];
@@ -216,11 +217,11 @@ export class LineSeries extends SeriesRenderer {
 
             if (this.options.datasetFill && (points.length > 0) && ((this.grid.status === 0) || (this.grid.status === 1))) {
                 if (this.grid.status === 0) {
-                    ctx.lineTo(points[points.length - 1].x, this.grid.baseY);
-                    ctx.lineTo(points[0].x, this.grid.baseY);
+                    ctx.lineTo(points[points.length - 1]!.x, this.grid.baseY);
+                    ctx.lineTo(points[0]!.x, this.grid.baseY);
                 } else {
-                    ctx.lineTo(this.grid.baseX, points[points.length - 1].y);
-                    ctx.lineTo(this.grid.baseX, points[0].y);
+                    ctx.lineTo(this.grid.baseX, points[points.length - 1]!.y);
+                    ctx.lineTo(this.grid.baseX, points[0]!.y);
                 }
                 ctx.globalAlpha = 0.85;
                 ctx.fillStyle = this.options.fillColor;
@@ -249,8 +250,9 @@ export function line(this: Charts) {
             eachEntry(this.series.line, function(i, options) {
                 options.index = id++;
                 chartName = this.getChartName(options.name);
-                if (this.historyCharts[chartName] && this.historyCharts[chartName].type == 'line') {
-                    chart = this.historyCharts[chartName];
+                const previous = this.historyCharts[chartName];
+                if (previous && previous.type == 'line') {
+                    chart = previous;
                     chart.update(options.data, options.index);
                 } else {
                     chart = new LineSeries(options, this, options.zIndex);

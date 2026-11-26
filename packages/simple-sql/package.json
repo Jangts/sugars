@@ -1,0 +1,22 @@
+{
+  "name": "@sugars/simple-sql",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Persistent browser tables ported from TangramJS Sheet.",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist/*.js",
+    "dist/*.d.ts",
+    "THIRD-PARTY-NOTICES.md",
+    "licenses"
+  ],
+  "dependencies": {
+    "@sugars/simple-mvvm": "0.1.0"
+  }
+}

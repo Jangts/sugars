@@ -27,7 +27,7 @@ export class Point extends ChartElement {
                 }
             }
         }
-    inRange(X, Y, strictHover) {
+    inRange(X: number, Y: number, strictHover: boolean) {
             if (strictHover) {
                 var hitDetectionRange = this.hitDetectionRadius + this.radius;
                 return ((Math.pow(X - this.x, 2) + Math.pow(Y - this.y, 2)) < Math.pow(hitDetectionRange, 2));
