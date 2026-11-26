@@ -1,6 +1,6 @@
 # sugars
 
-把 TangramJS 的 SimpleEditor、Charts 和 `see.highlight`，以及 GrandAPP 的 K Line Mobile 整理为独立的 ESM 包，提供 TypeScript 声明。项目结构、规范和维护资料从 [项目文档](docs/README.md) 进入。
+把 TangramJS 的编辑器、图表、高亮、动画、滚动控制和基础工具，以及 GrandAPP 的 K Line Mobile 整理为独立包。AMD、旧式 Promise 和类工厂使用 ES5 并提供普通脚本入口，其余包使用 ESM。项目结构、规范和维护资料从 [项目文档](docs/README.md) 进入。
 
 | 包 | 用途 |
 | --- | --- |
@@ -9,13 +9,18 @@
 | `@sugars/charts` | 切出 TangramJS 的 Canvas 渲染、比例尺和提示框 |
 | `@sugars/kline` | 支持鼠标和触摸的 Canvas K 线图 |
 | `@sugars/highlight` | 代码块语法高亮和纯文本转换，附历史语言规则与主题 |
+| [`@sugars/async`](packages/async/README.md) | ES5 AMD 加载器和 TangramJS 旧式 Promise |
+| [`@sugars/declare`](packages/declare/README.md) | ES5 原型类工厂 |
+| [`@sugars/animation`](packages/animation/README.md) | 场景和帧组成的动画播放器 |
+| [`@sugars/scroll-view`](packages/scroll-view/README.md) | 绑定调用方轨道和滑块的原生滚动控制器 |
+| [`@sugars/tools`](packages/tools/README.md) | 可按分类或单函数导入的基础工具 |
 
 ```sh
 npm ci
 npm run build
 ```
 
-工作区使用 `packages/*`。构建产物包含 ESM 和类型声明，可直接从各包名导入。
+工作区使用 `packages/*`。各包提供 TypeScript 声明，运行入口按包清单选择。
 
 ## 原生编辑器
 

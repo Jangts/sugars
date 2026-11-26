@@ -11,6 +11,10 @@
 | 两个编辑器的 npm 包体清单 | 构建后运行 `npm pack --dry-run --json --workspace @sugars/editor --workspace @sugars/editor-element` | 文件是否按预期入包。真实 tarball 安装和 registry 状态另行核对 |
 | K 线 | [K 线示例](../packages/kline/README.md)和 `npm pack --dry-run --json --workspace @sugars/kline` | 桌面鼠标和移动触摸、指标和行情更新、分辨率适配、清理、声明及来源文件 |
 | 代码高亮 | [高亮示例](../packages/highlight/README.md)和 `npm pack --dry-run --json --workspace @sugars/highlight` | 纯文本转义、语言登记、嵌套语法、DOM 属性与回调、主题及来源文件 |
+| ES5 兼容包 | [AMD 和 Promise 示例](../packages/async/README.md)、[declare 示例](../packages/declare/README.md)和 `npm pack --dry-run --json --workspace @sugars/async --workspace @sugars/declare` | 实际包体的 ES5 语法、普通脚本和 CommonJS 入口、AMD 加载、Promise 时序及原型继承 |
+| Animation | [场景播放器示例](../packages/animation/README.md)和 `npm pack --dry-run --json --workspace @sugars/animation` | 场景和帧定位、播放和中断、循环、回调及实际绘制 |
+| ScrollView | [滚动控制器示例](../packages/scroll-view/README.md)和 `npm pack --dry-run --json --workspace @sugars/scroll-view` | 不同轨道结构、双向同步、原生滚动、尺寸变化及解绑 |
+| 基础工具 | [工具用法](../packages/tools/README.md)和 `npm pack --dry-run --json --workspace @sugars/tools` | 根、分类及单函数入口，数据复制、边界输入、文本编解码与包体 |
 
 仓库目前没有登记自动浏览器回归脚本。验证浏览器行为时，记录实际浏览器、输入、断言及未覆盖场景。历史本机验证见 [迁移背景与共识](maintenance/project-background.md#已验证和待核对)。
 

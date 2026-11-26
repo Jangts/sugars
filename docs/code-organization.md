@@ -11,6 +11,11 @@
 | `packages/charts/src` | 图表实例负责装配、图层、调度和清理，系列、比例尺、图形和提示框各自持有绘制与交互规则 |
 | `packages/kline/src` | K 线实例组织行情、画布和交互生命周期。Layout 管可见区间与图表区域，Chart 管比例尺与指标，画笔负责绘制 |
 | `packages/highlight/src` | 语言入口按依赖顺序登记规则，分词模块负责词法匹配，渲染模块负责 HTML 转换和 DOM 更新 |
+| `packages/async` | AMD 加载器与旧 Promise 分别有可直接加载的 ES5 入口，模块缓存属于加载器实例 |
+| `packages/declare` | 独立的 ES5 原型类工厂，调用方持有和组合构造器 |
+| `packages/animation/src` | 场景与帧的调度及播放状态，调用方负责绘制 |
+| `packages/scroll-view/src` | 几何计算与 DOM 行为分开，原生视口持有滚动位置，调用方负责结构和样式 |
+| `packages/tools/src` | 一个公开函数对应一个模块，分类入口汇总函数，根入口汇总分类 |
 
 包间依赖通过清单和公开入口声明。编辑器保持普通 DOM 接入能力，Web Component 直接使用该能力。图表独立持有 Canvas 绘制模块。工具栏、弹窗、状态栏和视觉样式由编辑器的调用方组织。
 

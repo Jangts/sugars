@@ -1,0 +1,15 @@
+{
+  "name": "@sugars/async",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "description": "The TangramJS AMD loader and legacy Promise helpers as independent modules.",
+  "exports": {
+    ".": { "types": "./index.d.ts", "default": "./index.js" },
+    "./amd": { "types": "./amd.d.ts", "default": "./amd.js" },
+    "./promise": { "types": "./promise.d.ts", "default": "./promise.js" }
+  },
+  "files": ["*.js", "*.d.ts", "THIRD-PARTY-NOTICES.md", "licenses"]
+}

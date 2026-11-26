@@ -1,0 +1,8 @@
+export { default as isArray } from './isArray.js'
+export { default as isInteger } from './isInteger.js'
+export { default as isIntStr } from './isIntStr.js'
+export { default as isFloatStr } from './isFloatStr.js'
+export { default as type } from './type.js'
+export { default as fasttype } from './fasttype.js'
+export { default as isPercent } from './isPercent.js'
+export { default as isNumeric } from './isNumeric.js'

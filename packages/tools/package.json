@@ -1,0 +1,13 @@
+{
+  "name": "@sugars/tools",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Standalone general-purpose utilities selected from TangramJS.",
+  "exports": {
+    ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+    "./internal/*": null,
+    "./*": { "types": "./dist/*.d.ts", "import": "./dist/*.js" }
+  },
+  "files": ["dist/**/*.js", "dist/**/*.d.ts", "THIRD-PARTY-NOTICES.md", "licenses"]
+}

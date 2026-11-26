@@ -1,0 +1,13 @@
+{
+  "name": "@sugars/declare",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "description": "TangramJS's prototype-based class factory extracted from Pandora.",
+  "exports": {
+    ".": { "types": "./index.d.ts", "default": "./index.js" }
+  },
+  "files": ["*.js", "*.d.ts", "THIRD-PARTY-NOTICES.md", "licenses"]
+}

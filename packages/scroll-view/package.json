@@ -1,0 +1,11 @@
+{
+  "name": "@sugars/scroll-view",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Native scroll control with caller-owned tracks and thumbs.",
+  "exports": {
+    ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" }
+  },
+  "files": ["dist/*.js", "dist/*.d.ts", "THIRD-PARTY-NOTICES.md", "licenses"]
+}

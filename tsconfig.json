@@ -15,6 +15,21 @@
     },
     {
       "path": "packages/highlight"
+    },
+    {
+      "path": "packages/async"
+    },
+    {
+      "path": "packages/declare"
+    },
+    {
+      "path": "packages/animation"
+    },
+    {
+      "path": "packages/scroll-view"
+    },
+    {
+      "path": "packages/tools"
     }
   ]
 }

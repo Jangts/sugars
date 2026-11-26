@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "target": "ES5",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "lib": ["ES5"],
+    "types": [],
+    "noEmit": true,
+    "skipLibCheck": false,
+    "tsBuildInfoFile": "dist/.tsbuildinfo"
+  },
+  "include": ["*.d.ts"]
+}

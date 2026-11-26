@@ -8,6 +8,9 @@
 | `painter/Charts/components`、`modules`、`types`、`util` | `packages/charts/src` 中同名目录 |
 | `painter/canvas.js` 中 Charts 所需的绘制方法 | `packages/charts/src/util/canvas.ts` |
 | `see/highlight/highlight.js`、`languages/*` 和 `themes/*` | `packages/highlight`。接口与验证范围见 [代码高亮移植与验收](highlight-migration.md) |
+| `util/require.js`、`async/Promise.js`、`tangram.js` 的 `declareClass` | `packages/async` 和 `packages/declare`。入口见 [ES5 兼容模块移植](legacy-migration.md) |
+| `dom/Animation.js`、`see/Scrollbar/Abstract.js` 和 `Scrollbar.js` | `packages/animation` 和 `packages/scroll-view`。对应行为见 [Animation 与 ScrollView 移植](animation-scroll-migration.md) |
+| 核心数据操作、`arr/arr.js`、`obj/obj.js`、`str/str.js`、`util/{bool,type}.js`、`math/math.js` | `packages/tools`。工具范围与行为见 [基础工具移植](tools-migration.md) |
 
 编辑器延续 `SimpleEditor`、`execCommand(cmd, value)`、`getValue(index)`、`setValue(value, index)`、`resetValue`、`insertImage` 等方法，保留原来拼写的 `careatEditor` 和 `careatEditors` 入口。原来的工具栏、弹窗、状态栏与样式由调用方自行组织。原上传回调可用 `options.uploader.transfer` 接入，通过 `uploadFiles` 调用。视频插入使用 HTML video，旧 SWF 插入已移除。格式命令沿用浏览器的 `execCommand`，因此具体格式标记和撤销粒度由浏览器决定。外部 HTML 通过 DOMPurify 处理。
 
